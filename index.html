@@ -10,10 +10,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Soft and Approachable (#F5F5F5, #E0E0E0, #A1887F, #81C784) -->
-    <!-- Application Structure Plan: The SPA is designed as a narrative journey. 1) 'El Desafío' presents the crisis with a data-rich dashboard to establish the problem's scale. 2) 'La Visión' introduces the 6 strategic axes through interactive cards, making the solution feel tangible. 3) 'El Plan de Acción' details the 'how' with an interactive timeline for the phases and a bar chart for the initial budget. 4) 'Proyectos Clave' allows users to drill down into specific initiatives using a tabbed interface. This structure guides the user from problem to solution in a logical, engaging flow, prioritizing understanding over a rigid report-like format. -->
+    <!-- Application Structure Plan: The SPA is designed as a narrative journey. 1) 'El Desafío' presents the crisis with a data-rich dashboard to establish the problem's scale. 2) 'La Visión' introduces the 6 strategic axes through interactive cards. 3) 'Desarrollo' details diversification and social plans. 4) 'El Plan de Acción' details the 'how' with timeline and budget. 5) 'Proyectos Clave' allows users to drill down into specific initiatives. This structure guides the user from problem to solution in a logical, engaging flow. -->
     <!-- Visualization & Content Choices: 
         - Policrisis Data -> Goal: Inform/Compare -> Donut & Bar Charts (Chart.js/Canvas). Justification: Effectively shows proportions and comparisons for key crisis metrics. Interaction: Tooltips.
         - 6 Strategic Axes -> Goal: Organize -> Interactive HTML/CSS Cards. Justification: Organizes the core pillars of the plan cleanly, with hover/click to reveal details without clutter. Interaction: JS-powered content visibility toggle.
+        - Economic Development -> Goal: Organize/Inform -> HTML/CSS Cards. Justification: Presents diverse new projects in a clear, digestible format consistent with the site's design.
         - Implementation Phases -> Goal: Change -> HTML/CSS Timeline. Justification: Clearly visualizes the sequence of actions over time. Interaction: Scroll-based exploration.
         - Phase 1 Budget -> Goal: Compare/Composition -> Horizontal Bar Chart (Chart.js/Canvas). Justification: Excellent for comparing the financial allocation across multiple projects. Interaction: Tooltips.
         - Emblematic Projects -> Goal: Inform/Organize -> HTML/CSS Tabbed Interface. Justification: Structures detailed text-heavy content in a compact, user-controlled manner. Interaction: JS-powered tab switching.
@@ -61,6 +62,7 @@
             <div class="hidden md:flex space-x-8">
                 <a href="#desafio" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">El Desafío</a>
                 <a href="#vision" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">La Visión</a>
+                <a href="#desarrollo" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Desarrollo</a>
                 <a href="#plan" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">El Plan</a>
                 <a href="#proyectos" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Proyectos Clave</a>
             </div>
@@ -119,8 +121,49 @@
                 </div>
             </div>
         </section>
+        
+        <section id="desarrollo" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Plan de Desarrollo Económico y Social</h2>
+                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Iniciativas estratégicas para diversificar la economía, generar empleo y fortalecer el tejido social del municipio.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl mb-4 text-center">🌿</div>
+                        <h3 class="text-xl font-bold text-center text-gray-700">Proyecto Cáñamo Industrial</h3>
+                        <p class="text-justify mt-2 text-gray-600">Impulso a la siembra y procesamiento de cáñamo para la producción y exportación de biodiesel, posicionando a la región en la vanguardia de las energías limpias.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl mb-4 text-center">⚡️</div>
+                        <h3 class="text-xl font-bold text-center text-gray-700">Adecuación de Transmisión Eléctrica</h3>
+                        <p class="text-justify mt-2 text-gray-600">Modernización y fortalecimiento de la infraestructura de transmisión para garantizar un suministro estable y confiable, clave para la industrialización.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl mb-4 text-center">💎</div>
+                        <h3 class="text-xl font-bold text-center text-gray-700">Planta Procesadora de Minerales</h3>
+                        <p class="text-justify mt-2 text-gray-600">Establecimiento de una planta procesadora en la zona limítrofe con Sucre para transformar la riqueza del subsuelo en desarrollo industrial, agregando valor local a la producción y generando un nuevo polo económico.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl mb-4 text-center">📜</div>
+                        <h3 class="text-xl font-bold text-center text-gray-700">Oficina de Certificación NI 43-101</h3>
+                        <p class="text-justify mt-2 text-gray-600">Apertura de una oficina para la certificación de minerales bajo estándares internacionales, atrayendo inversión formal y garantizando transparencia.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl mb-4 text-center">⚽</div>
+                        <h3 class="text-xl font-bold text-center text-gray-700">Rearticulación del Sistema Deportivo</h3>
+                        <p class="text-justify mt-2 text-gray-600">Revitalización de la infraestructura y los programas deportivos municipales para fomentar la salud, la disciplina y la cohesión social en los jóvenes.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl mb-4 text-center">🎭</div>
+                        <h3 class="text-xl font-bold text-center text-gray-700">Impulso Cultural y Social</h3>
+                        <p class="text-justify mt-2 text-gray-600">Lanzamiento de un programa integral de atención social y fomento cultural para fortalecer la identidad local y el bienestar comunitario.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <section id="plan" class="py-16 md:py-24">
+        <section id="plan" class="py-16 md:py-24 bg-gray-50">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl md:text-4xl font-bold text-gray-800">El Plan de Acción</h2>
@@ -355,7 +398,7 @@
             card.innerHTML = `
                 <div class="text-4xl mb-4 text-center">${axis.icon}</div>
                 <h3 class="text-xl font-bold text-center text-gray-800">${axis.title}</h3>
-                <p class="text-gray-600 mt-2 text-center text-sm">${axis.desc}</p>
+                <p class="text-gray-600 mt-2 text-justify text-sm">${axis.desc}</p>
             `;
             axesGrid.appendChild(card);
         });
