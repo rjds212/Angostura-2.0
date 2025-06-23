@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Soft and Approachable (#F5F5F5, #E0E0E0, #A1887F, #81C784) -->
+    <!-- Chosen Palette: PRN Inspired Teal & Lime (#2A6B72, #B8D37B) -->
     <!-- Application Structure Plan: The SPA is designed as a narrative journey. 1) 'El Desafío' presents the crisis with a data-rich dashboard to establish the problem's scale. 2) 'La Visión' introduces the 6 strategic axes through interactive cards. 3) 'Desarrollo' details diversification and social plans. 4) 'El Plan de Acción' details the 'how' with timeline and budget. 5) 'Proyectos Clave' allows users to drill down into specific initiatives. This structure guides the user from problem to solution in a logical, engaging flow. -->
     <!-- Visualization & Content Choices: 
         - Policrisis Data -> Goal: Inform/Compare -> Donut & Bar Charts (Chart.js/Canvas). Justification: Effectively shows proportions and comparisons for key crisis metrics. Interaction: Tooltips.
@@ -23,8 +23,8 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F5F5F5;
-            color: #424242;
+            background-color: #F9FAFB;
+            color: #374151;
         }
         .chart-container {
             position: relative;
@@ -44,12 +44,13 @@
             transition: color 0.3s, border-color 0.3s;
         }
         .nav-link:hover {
-            color: #81C784;
-            border-bottom-color: #81C784;
+            color: #B8D37B;
+            border-bottom-color: #B8D37B;
         }
         .tab-btn.active {
-            background-color: #81C784;
-            color: white;
+            background-color: #B8D37B;
+            color: #374151;
+            font-weight: 600;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
     </style>
@@ -58,7 +59,9 @@
 
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-[#A1887F]">Angostura <span class="text-[#81C784]">2.0</span></a>
+            <a href="#" class="flex items-center gap-4">
+                <span class="text-2xl font-bold text-[#2A6B72]">Angostura <span style="color: #B8D37B;">2.0</span></span>
+            </a>
             <div class="hidden md:flex space-x-8">
                 <a href="#desafio" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">El Desafío</a>
                 <a href="#vision" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">La Visión</a>
@@ -75,7 +78,8 @@
     <main>
         <section id="hero" class="bg-white">
             <div class="container mx-auto px-6 py-16 md:py-24 text-center">
-                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight">Plan Maestro para la Primera <br> <span class="text-[#81C784]">Ciudad Inteligente</span> de Venezuela</h1>
+                <img src="https://github.com/rjds212/Angostura-2.0/blob/main/1001271078.png" alt="Logo PRN Bolívar" class="h-48 w-48 rounded-full shadow-xl border-4 border-white mx-auto mb-8">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight">Plan Maestro para la Primera <br> <span style="color: #B8D37B;">Ciudad Inteligente</span> de Venezuela</h1>
                 <p class="mt-6 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Una propuesta estructurada para transformar a Ciudad Bolívar en un modelo de resiliencia, innovación y desarrollo sostenible.</p>
             </div>
         </section>
@@ -103,7 +107,7 @@
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col justify-center items-center text-center">
                          <h3 class="text-xl font-bold text-gray-700">Emergencia de Género</h3>
-                         <p class="text-6xl font-extrabold text-[#81C784] my-4">9,816</p>
+                         <p class="text-6xl font-extrabold my-4" style="color: #B8D37B;">9,816</p>
                          <p class="text-lg text-gray-600">Casos reportados de violencia contra la mujer, con un incremento del <span class="font-bold">33.4%</span> en violencia sexual en 2024.</p>
                     </div>
                 </div>
@@ -172,9 +176,9 @@
                 <div class="grid grid-cols-1 lg:grid-cols-1 gap-12 items-start">
                     <div class="max-w-2xl mx-auto">
                         <h3 class="text-2xl font-bold text-gray-700 mb-6 text-center">Implementación por Fases</h3>
-                        <div class="space-y-8 border-l-2 border-gray-200 ml-4 pl-8">
+                        <div class="space-y-8 border-l-2 ml-4 pl-8" style="border-color: #B8D37B;">
                             <div class="relative">
-                                <div class="absolute -left-10 h-5 w-5 bg-[#81C784] rounded-full mt-1.5 border-4 border-white"></div>
+                                <div class="absolute -left-10 h-5 w-5 rounded-full mt-1.5 border-4 border-white" style="background-color: #2A6B72;"></div>
                                 <h4 class="text-xl font-bold text-gray-800">Fase I: Cimientos (Años 1-2)</h4>
                                 <p class="text-gray-600 mt-1">Creación del CITA, marco legal y proyectos piloto de alto impacto (Agua, WiFi, Gobierno Digital) para generar confianza.</p>
                             </div>
@@ -213,7 +217,7 @@
         
     </main>
     
-    <footer class="bg-[#A1887F] text-white">
+    <footer style="background-color: #2A6B72;" class="text-white">
         <div class="container mx-auto px-6 py-12 text-center">
             <h2 class="text-2xl md:text-3xl font-bold">Forjando un Nuevo Contrato Social</h2>
             <p class="mt-4 max-w-3xl mx-auto text-gray-200">Angostura 2.0 es la oportunidad de que la cuna de la República sea también la cuna de una nueva visión para Venezuela, basada en la eficiencia, la transparencia y la participación.</p>
@@ -286,7 +290,7 @@
                 labels: ['Sin acceso por tuberías', 'Con acceso por tuberías'],
                 datasets: [{
                     data: [27.5, 72.5],
-                    backgroundColor: ['#A1887F', '#81C784'],
+                    backgroundColor: ['#2A6B72', '#B8D37B'],
                     borderColor: '#FFFFFF',
                     borderWidth: 4
                 }]
@@ -318,7 +322,7 @@
                 datasets: [{
                     label: 'Muertes violentas por 100k hab.',
                     data: [34.2, 18.0],
-                    backgroundColor: ['#A1887F', '#81C784'],
+                    backgroundColor: ['#2A6B72', '#B8D37B'],
                     barThickness: 50,
                 }]
             },
@@ -331,7 +335,7 @@
             { icon: '💡', title: 'Infraestructura Resiliente', desc: 'Redes inteligentes de energía y agua para garantizar servicios eficientes y confiables para todos.' },
             { icon: '🚌', title: 'Movilidad Integrada', desc: 'Transporte público seguro y eficiente, con pago único y semaforización inteligente para optimizar el flujo.' },
             { icon: '🛡️', title: 'Seguridad y Prevención', desc: 'Videovigilancia con IA, botones de pánico y plataformas de denuncia para un enfoque proactivo contra el delito.' },
-            { icon: '📈', title: 'Economía y Turismo 4.0', desc: 'Incubación de startups y experiencias turísticas inmersivas para reactivar y diversificar la economía local.' },
+            { icon: '�', title: 'Economía y Turismo 4.0', desc: 'Incubación de startups y experiencias turísticas inmersivas para reactivar y diversificar la economía local.' },
             { icon: '🌳', title: 'Sostenibilidad y Patrimonio', desc: 'Monitoreo ambiental con IoT y gestión inteligente de residuos para proteger nuestro legado natural y cultural.' }
         ];
 
@@ -427,3 +431,4 @@
     </script>
 </body>
 </html>
+�
