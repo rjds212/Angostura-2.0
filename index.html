@@ -66,6 +66,32 @@
             font-weight: 600;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(-25%);
+                animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+            }
+            50% {
+                transform: translateY(0);
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        .animate-bounce-slow {
+            animation: bounce 2s infinite;
+        }
     </style>
 </head>
 <body>
@@ -90,12 +116,15 @@
     </header>
 
     <main>
-        <section id="hero" class="bg-white">
+        <section id="hero" class="bg-white relative">
             <div class="container mx-auto px-6 py-20 md:py-28 text-center">
-                <img src="https://i.imgur.com/qBfDlGn.png" alt="Logo PRN Bolívar" class="h-40 w-40 md:h-48 md:w-48 rounded-full shadow-2xl border-4 border-white mx-auto mb-8">
-                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight">Plan Maestro para la Primera <br> <span style="color: #B8D37B;">Ciudad Inteligente</span> de Venezuela</h1>
-                <p class="mt-8 text-lg md:text-xl text-gray-500 max-w-3xl mx-auto">Una propuesta estructurada para transformar a Ciudad Bolívar en un modelo de resiliencia, innovación y desarrollo sostenible.</p>
+                <img src="https://i.imgur.com/qBfDlGn.png" alt="Logo PRN Bolívar" class="h-40 w-40 md:h-48 md:w-48 rounded-full shadow-2xl border-4 border-white mx-auto mb-8 animate-fade-in-up" style="opacity:0; animation-delay: 0.2s;">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight animate-fade-in-up" style="opacity:0; animation-delay: 0.4s;">Plan Maestro para la Primera <br> <span style="color: #B8D37B;">Ciudad Inteligente</span> de Venezuela</h1>
+                <p class="mt-8 text-lg md:text-xl text-gray-500 max-w-3xl mx-auto animate-fade-in-up" style="opacity:0; animation-delay: 0.6s;">Una propuesta estructurada para transformar a Ciudad Bolívar en un modelo de resiliencia, innovación y desarrollo sostenible.</p>
             </div>
+            <a href="#desafio" class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce-slow">
+                <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </a>
         </section>
 
         <section id="desafio" class="py-20 md:py-28">
@@ -156,8 +185,8 @@
                         </div>
                         <div class="md:col-span-2">
                             <h3 class="text-4xl font-bold text-gray-800">Eduardo A. Navarro M.</h3>
-                            <p class="mt-6 text-justify text-gray-600 leading-relaxed">45 años. Nacido en Ciudad Piar municipio Bolivariano de Angostura. Graduado en la Universidad de Oriente Núcleo Bolívar. Casado, con 2 hijos. Actualmente se desempeña como <strong>Asesor de Negocios Internacionales</strong> y <strong>Representante para Venezuela de varios consorcios</strong>: Global Business Bridges LLC, The Diamond Group, 963 Global Miners and Agroindustries y otras empresas que trabajan en vinculación directa con <strong>La Nueva Ruta de la Seda</strong>. Actualmente desarrolla un conglomerado de proyectos de mediano y gran alcance, con la finalidad de recuperar el aparato productivo nacional y fortalecer la economía del país, basado en relaciones de <strong>cooperación de inversión internacional sin endeudamiento a futuro.</strong></p>
-                            <p class="mt-4 text-justify text-gray-600 leading-relaxed">Entre sus características definitorias se encuentran: Amplia <strong>capacidad de Gerencia, Articulador y Mediador</strong> en situaciones críticas que requieran decisiones trascendentes y consensuadas, <strong>Pragmático, Resolutor de problemas</strong> de toda índole. Creador y ejecutor del Plan de Gobernanza Inteligente "Venezuela 6.0". Cuenta con una <strong>consolidada cartera de aliados, socios e inversionistas</strong> que tienen la firme disposición de recuperar la economía del país.</p>
+                            <p class="mt-6 text-justify text-gray-600 leading-relaxed">45 años. Nacido en Ciudad Piar municipio Bolivariano de Angostura. Graduado en la Universidad de Oriente Núcleo Bolívar. Casado, con 2 hijos. Actualmente me desempeño como <strong>Asesor de Negocios Internacionales</strong> y <strong>Representante para Venezuela de varios consorcios</strong>: Global Business Bridges LLC, The Diamond Group, 963 Global Miners and Agroindustries y otras empresas que trabajan en vinculación directa con <strong>La Nueva Ruta de la Seda</strong>. Actualmente desarrolla un conglomerado de proyectos de mediano y gran alcance, con la finalidad de recuperar el aparato productivo nacional y fortalecer la economía del país, basado en relaciones de <strong>cooperación de inversión internacional sin endeudamiento a futuro.</strong></p>
+                            <p class="mt-4 text-justify text-gray-600 leading-relaxed">Entre sus características definitorias se encuentran: Amplia <strong>capacidad de Gerencia, Articulador y Mediador</strong> en situaciones críticas que requieran decisiones trascendentes y consensuadas, <strong>Pragmático, Resolutor de problemas</strong> de toda índole. Creador y ejecutor del Plan de Gobernanza inteligente "Venezuela 6.0". Cuenta con una <strong>consolidada cartera de aliados, socios e inversionistas</strong> que tienen la firme disposición de recuperar la economía del país.</p>
                         </div>
                     </div>
                 </div>
