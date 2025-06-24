@@ -92,6 +92,17 @@
         .animate-bounce-slow {
             animation: bounce 2s infinite;
         }
+        #hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: 0;
+            transform: translateX(-50%) translateY(-50%);
+        }
     </style>
 </head>
 <body>
@@ -116,14 +127,18 @@
     </header>
 
     <main>
-        <section id="hero" class="bg-white relative">
-            <div class="container mx-auto px-6 py-20 md:py-28 text-center">
+        <section id="hero" class="relative overflow-hidden h-screen flex items-center justify-center">
+            <video autoplay loop muted playsinline id="hero-video">
+                <source src="https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4" type="video/mp4">
+            </video>
+            <div class="absolute top-0 left-0 w-full h-full" style="background-color: rgba(42, 107, 114, 0.6);"></div>
+            <div class="relative z-10 text-center px-6">
                 <img src="https://i.imgur.com/qBfDlGn.png" alt="Logo PRN Bolívar" class="h-40 w-40 md:h-48 md:w-48 rounded-full shadow-2xl border-4 border-white mx-auto mb-8 animate-fade-in-up" style="opacity:0; animation-delay: 0.2s;">
-                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight animate-fade-in-up" style="opacity:0; animation-delay: 0.4s;">Plan Maestro para la Primera <br> <span style="color: #B8D37B;">Ciudad Inteligente</span> de Venezuela</h1>
-                <p class="mt-8 text-lg md:text-xl text-gray-500 max-w-3xl mx-auto animate-fade-in-up" style="opacity:0; animation-delay: 0.6s;">Una propuesta estructurada para transformar a Ciudad Bolívar en un modelo de resiliencia, innovación y desarrollo sostenible.</p>
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight animate-fade-in-up" style="opacity:0; animation-delay: 0.4s;">Plan Maestro para la Primera <br> <span style="color: #B8D37B;">Ciudad Inteligente</span> de Venezuela</h1>
+                <p class="mt-8 text-lg md:text-xl text-gray-200 max-w-3xl mx-auto animate-fade-in-up" style="opacity:0; animation-delay: 0.6s;">Una propuesta estructurada para transformar a Ciudad Bolívar en un modelo de resiliencia, innovación y desarrollo sostenible.</p>
             </div>
-            <a href="#desafio" class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce-slow">
-                <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <a href="#desafio" class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce-slow z-10">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </a>
         </section>
 
@@ -371,7 +386,7 @@
             { icon: '💎', title: 'Planta Procesadora de Minerales', desc: 'Establecimiento de una planta procesadora en la zona limítrofe con Sucre para transformar la riqueza del subsuelo en desarrollo industrial, agregando valor local a la producción y generando un nuevo polo económico.' },
             { icon: '📜', title: 'Oficina de Certificación NI 43-101', desc: 'Apertura de una oficina para la certificación de minerales bajo estándares internacionales, atrayendo inversión formal y garantizando transparencia.' },
             { icon: '⚽', title: 'Rearticulación del Sistema Deportivo', desc: 'Revitalización de la infraestructura y los programas deportivos municipales para fomentar la salud, la disciplina y la cohesión social en los jóvenes.' },
-            { icon: '🎭', title: 'Impulso Cultural y Social', desc: 'Lanzamiento de un programa integral de atención social y fomento cultural para fortalecer la identidad local y el bienestar comunitario.' }
+            { icon: '�', title: 'Impulso Cultural y Social', desc: 'Lanzamiento de un programa integral de atención social y fomento cultural para fortalecer la identidad local y el bienestar comunitario.' }
         ];
         const devGrid = document.querySelector('#desarrollo .grid');
         devData.forEach(item => {
@@ -453,4 +468,3 @@
     </script>
 </body>
 </html>
-
