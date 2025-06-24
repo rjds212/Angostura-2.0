@@ -8,8 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: PRN Inspired Teal & Lime (#2A6B72, #B8D37B) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Refined PRN Teal & Lime (#2A6B72, #B8D37B) on Neutrals -->
     <!-- Application Structure Plan: The SPA is designed as a narrative journey. 1) 'El Desafío' presents the crisis. 2) 'La Visión' introduces the strategic axes. 3) 'El Candidato' introduces the leader. 4) 'Desarrollo' details diversification plans. 5) 'El Plan' shows the timeline. 6) 'Proyectos Clave' allows drill-down. This structure guides the user from problem to solution. -->
     <!-- Visualization & Content Choices: 
         - Policrisis Data -> Goal: Inform/Compare -> Donut & Bar Charts (Chart.js/Canvas). Justification: Effectively shows proportions and comparisons for key crisis metrics. Interaction: Tooltips.
@@ -22,34 +22,47 @@
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #F9FAFB;
-            color: #374151;
+            font-family: 'Lato', sans-serif;
+            background-color: #F8F9FA;
+            color: #495057;
+        }
+        h1, h2, h3, h4, h5, h6, .font-title {
+            font-family: 'Poppins', sans-serif;
         }
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             margin-left: auto;
             margin-right: auto;
-            height: 300px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
+            height: 280px;
+            max-height: 350px;
         }
         .nav-link {
-            transition: color 0.3s, border-color 0.3s;
+            position: relative;
+            transition: color 0.3s;
+            padding-bottom: 8px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #B8D37B;
+            transition: width 0.3s ease-in-out;
+        }
+        .nav-link:hover::after {
+            width: 100%;
         }
         .nav-link:hover {
-            color: #B8D37B;
-            border-bottom-color: #B8D37B;
+            color: white;
         }
         .tab-btn.active {
             background-color: #B8D37B;
-            color: #374151;
+            color: #2A6B72;
             font-weight: 600;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
@@ -57,18 +70,18 @@
 </head>
 <body>
 
-    <header class="sticky top-0 z-50 shadow-lg" style="background-color: #2A6B72;">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <header class="sticky top-0 z-50 shadow-md" style="background-color: #2A6B72;">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
             <a href="#" class="flex items-center gap-4">
-                <span class="text-2xl font-bold text-white">Angostura <span style="color: #B8D37B;">Inteligente</span></span>
+                <span class="text-3xl font-bold text-white font-title">Angostura <span style="color: #B8D37B;">Inteligente</span></span>
             </a>
-            <div class="hidden md:flex space-x-8">
-                <a href="#desafio" class="nav-link text-gray-200 font-semibold border-b-2 border-transparent pb-1">El Desafío</a>
-                <a href="#vision" class="nav-link text-gray-200 font-semibold border-b-2 border-transparent pb-1">La Visión</a>
-                <a href="#candidato" class="nav-link text-gray-200 font-semibold border-b-2 border-transparent pb-1">El Candidato</a>
-                <a href="#desarrollo" class="nav-link text-gray-200 font-semibold border-b-2 border-transparent pb-1">Desarrollo</a>
-                <a href="#plan" class="nav-link text-gray-200 font-semibold border-b-2 border-transparent pb-1">El Plan</a>
-                <a href="#proyectos" class="nav-link text-gray-200 font-semibold border-b-2 border-transparent pb-1">Proyectos Clave</a>
+            <div class="hidden md:flex items-center space-x-10">
+                <a href="#desafio" class="nav-link text-gray-200 font-semibold">El Desafío</a>
+                <a href="#vision" class="nav-link text-gray-200 font-semibold">La Visión</a>
+                <a href="#candidato" class="nav-link text-gray-200 font-semibold">El Candidato</a>
+                <a href="#desarrollo" class="nav-link text-gray-200 font-semibold">Desarrollo</a>
+                <a href="#plan" class="nav-link text-gray-200 font-semibold">El Plan</a>
+                <a href="#proyectos" class="nav-link text-gray-200 font-semibold">Proyectos</a>
             </div>
             <div class="md:hidden">
                 <!-- Mobile menu button can be added here -->
@@ -78,157 +91,136 @@
 
     <main>
         <section id="hero" class="bg-white">
-            <div class="container mx-auto px-6 py-16 md:py-24 text-center">
-                <img src="https://i.imgur.com/qBfDlGn.png" alt="Logo PRN Bolívar" class="h-48 w-48 rounded-full shadow-xl border-4 border-white mx-auto mb-8">
+            <div class="container mx-auto px-6 py-20 md:py-28 text-center">
+                <img src="https://i.imgur.com/qBfDlGn.png" alt="Logo PRN Bolívar" class="h-40 w-40 md:h-48 md:w-48 rounded-full shadow-2xl border-4 border-white mx-auto mb-8">
                 <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight">Plan Maestro para la Primera <br> <span style="color: #B8D37B;">Ciudad Inteligente</span> de Venezuela</h1>
-                <p class="mt-6 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Una propuesta estructurada para transformar a Ciudad Bolívar en un modelo de resiliencia, innovación y desarrollo sostenible.</p>
+                <p class="mt-8 text-lg md:text-xl text-gray-500 max-w-3xl mx-auto">Una propuesta estructurada para transformar a Ciudad Bolívar en un modelo de resiliencia, innovación y desarrollo sostenible.</p>
             </div>
         </section>
 
-        <section id="desafio" class="py-16 md:py-24">
+        <section id="desafio" class="py-20 md:py-28">
             <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">El Desafío: Diagnóstico de una Policrisis</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Ciudad Bolívar enfrenta un colapso sistémico de servicios, seguridad y economía que requiere una intervención integral y urgente.</p>
+                <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">El Desafío: Diagnóstico de una Policrisis</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Ciudad Bolívar enfrenta un colapso sistémico de servicios, seguridad y economía que requiere una intervención integral y urgente.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <h3 class="text-xl font-bold text-center text-gray-700 mb-4">Crisis Hídrica</h3>
-                        <div class="chart-container h-64">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <div class="bg-white p-8 rounded-xl shadow-md">
+                        <h3 class="text-2xl font-bold text-center text-gray-700 mb-6">Crisis Hídrica</h3>
+                        <div class="chart-container">
                             <canvas id="waterChart"></canvas>
                         </div>
-                        <p class="text-center mt-4 text-gray-600">Ciudad Bolívar es la urbe con mayor porcentaje de población (27.5%) sin acceso a agua por tuberías en el país.</p>
+                        <p class="text-center mt-6 text-gray-600">Ciudad Bolívar es la urbe con mayor porcentaje de población (27.5%) sin acceso a agua por tuberías en el país.</p>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <h3 class="text-xl font-bold text-center text-gray-700 mb-4">Crisis de Seguridad</h3>
-                        <div class="chart-container h-64">
+                    <div class="bg-white p-8 rounded-xl shadow-md">
+                        <h3 class="text-2xl font-bold text-center text-gray-700 mb-6">Crisis de Seguridad</h3>
+                        <div class="chart-container">
                             <canvas id="violenceChart"></canvas>
                         </div>
-                        <p class="text-center mt-4 text-gray-600">Bolívar es el 4to estado más violento, con una tasa de muertes que casi duplica el promedio nacional.</p>
+                        <p class="text-center mt-6 text-gray-600">Bolívar es el 4to estado más violento, con una tasa de muertes que casi duplica el promedio nacional.</p>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col justify-center items-center text-center">
-                         <h3 class="text-xl font-bold text-gray-700">Emergencia de Género</h3>
-                         <p class="text-6xl font-extrabold my-4" style="color: #B8D37B;">9,816</p>
+                    <div class="bg-white p-8 rounded-xl shadow-md flex flex-col justify-center items-center text-center">
+                         <h3 class="text-2xl font-bold text-gray-700">Emergencia de Género</h3>
+                         <p class="text-7xl font-extrabold my-4" style="color: #B8D37B;">9,816</p>
                          <p class="text-lg text-gray-600">Casos reportados de violencia contra la mujer, con un incremento del <span class="font-bold">33.4%</span> en violencia sexual en 2024.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="vision" class="py-16 md:py-24 bg-white">
+        <section id="vision" class="py-20 md:py-28 bg-white">
             <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">La Visión: 6 Ejes de Transformación</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">La solución se articula sobre seis pilares estratégicos interconectados para un desarrollo integral y centrado en el ciudadano.</p>
+                <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">La Visión: 6 Ejes de Transformación</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">La solución se articula sobre seis pilares estratégicos interconectados para un desarrollo integral y centrado en el ciudadano.</p>
                 </div>
-                <div id="axes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div id="axes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Axes cards will be dynamically inserted here by JavaScript -->
                 </div>
             </div>
         </section>
 
-        <section id="candidato" class="py-16 md:py-24">
+        <section id="candidato" class="py-20 md:py-28">
             <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Biografía del Candidato</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">La persona detrás de la visión para una Angostura Inteligente.</p>
+                <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Biografía del Candidato</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">La persona detrás de la visión para una Angostura Inteligente.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-center">
-                    <div class="md:col-span-1">
-                        <img src="https://i.imgur.com/EjEsvmZ.jpg" alt="Foto del Candidato Eduardo Navarro" class="w-full max-w-sm mx-auto rounded-lg shadow-2xl">
-                    </div>
-                    <div class="md:col-span-2">
-                        <h3 class="text-2xl font-bold text-gray-800">Eduardo A. Navarro M.</h3>
-                        <p class="mt-4 text-justify text-gray-600">45 años. Nacido en Ciudad Piar municipio Bolivariano de Angostura. Graduado en la Universidad de Oriente Núcleo Bolívar. Casado, con 2 hijos. Vive en Ciudad Bolívar, se desempeña como <strong>Asesor de Negocios Internacionales</strong> y <strong>Representante para Venezuela de varios consorcios</strong>: Global Business Bridges LLC, The Diamond Group, 963 Global Miners and Agroindustries y otras empresas que trabajan en vinculación directa con <strong>La Nueva Ruta de la Seda</strong>. Actualmente desarrolla un conglomerado de proyectos de mediano y gran alcance, con la finalidad de recuperar el aparato productivo nacional y fortalecer la economía del país, basado en relaciones de <strong>cooperación de inversión internacional sin endeudamiento a futuro.</strong></p>
-                        <p class="mt-4 text-justify text-gray-600">Entre sus características definitorias se encuentran: Amplia <strong>capacidad de Gerencia, Articulador y Mediador</strong> en situaciones críticas que requieran desiciones trascendentes y consensuadas, <strong>Pragmático, Resolutor de problemas</strong> de toda índole. Creador y ejecutor del Plan de Gobernanza Inteligente "Venezuela 6.0". Cuenta con una <strong>consolidada cartera de aliados, socios e inversionistas</strong> que tienen la firme disposición de recuperar la economía del país.</p>
+                <div class="bg-white p-8 md:p-12 rounded-xl shadow-md">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-center">
+                        <div class="md:col-span-1">
+                            <img src="https://i.imgur.com/EjEsvmZ.jpg" alt="Foto del Candidato Eduardo Navarro" class="w-full max-w-xs mx-auto rounded-lg shadow-xl">
+                        </div>
+                        <div class="md:col-span-2">
+                            <h3 class="text-4xl font-bold text-gray-800">Eduardo A. Navarro M.</h3>
+                            <p class="mt-6 text-justify text-gray-600 leading-relaxed">45 años. Nacido en Ciudad Piar municipio Bolivariano de Angostura. Graduado en la Universidad de Oriente Núcleo Bolívar. Casado, con 2 hijos. Actualmente se desempeña como <strong>Asesor de Negocios Internacionales</strong> y <strong>Representante para Venezuela de varios consorcios</strong>: Global Business Bridges LLC, The Diamond Group, 963 Global Miners and Agroindustries y otras empresas que trabajan en vinculación directa con <strong>La Nueva Ruta de la Seda</strong>. Actualmente desarrolla un conglomerado de proyectos de mediano y gran alcance, con la finalidad de recuperar el aparato productivo nacional y fortalecer la economía del país, basado en relaciones de <strong>cooperación de inversión internacional sin endeudamiento a futuro.</strong></p>
+                            <p class="mt-4 text-justify text-gray-600 leading-relaxed">Entre sus características definitorias se encuentran: Amplia <strong>capacidad de Gerencia, Articulador y Mediador</strong> en situaciones críticas que requieran decisiones trascendentes y consensuadas, <strong>Pragmático, Resolutor de problemas</strong> de toda índole. Creador y ejecutor del Plan de Gobernanza Inteligente "Venezuela 6.0". Cuenta con una <strong>consolidada cartera de aliados, socios e inversionistas</strong> que tienen la firme disposición de recuperar la economía del país.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
         
-        <section id="desarrollo" class="py-16 md:py-24 bg-white">
+        <section id="desarrollo" class="py-20 md:py-28 bg-white">
             <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Plan de Desarrollo Económico y Social</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Iniciativas estratégicas para diversificar la economía, generar empleo y fortalecer el tejido social del municipio.</p>
+                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Plan de Desarrollo Económico y Social</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Iniciativas estratégicas para diversificar la economía, generar empleo y fortalecer el tejido social del municipio.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-4xl mb-4 text-center">🌿</div>
-                        <h3 class="text-xl font-bold text-center text-gray-700">Proyecto Cáñamo Industrial</h3>
-                        <p class="text-justify mt-2 text-gray-600">Impulso a la siembra y procesamiento de cáñamo para la producción y exportación de biodiesel, posicionando a la región en la vanguardia de las energías limpias.</p>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-4xl mb-4 text-center">⚡️</div>
-                        <h3 class="text-xl font-bold text-center text-gray-700">Adecuación de Transmisión Eléctrica</h3>
-                        <p class="text-justify mt-2 text-gray-600">Modernización y fortalecimiento de la infraestructura de transmisión para garantizar un suministro estable y confiable, clave para la industrialización.</p>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-4xl mb-4 text-center">💎</div>
-                        <h3 class="text-xl font-bold text-center text-gray-700">Planta Procesadora de Minerales</h3>
-                        <p class="text-justify mt-2 text-gray-600">Establecimiento de una planta procesadora en la zona limítrofe con Sucre para transformar la riqueza del subsuelo en desarrollo industrial, agregando valor local a la producción y generando un nuevo polo económico.</p>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-4xl mb-4 text-center">📜</div>
-                        <h3 class="text-xl font-bold text-center text-gray-700">Oficina de Certificación NI 43-101</h3>
-                        <p class="text-justify mt-2 text-gray-600">Apertura de una oficina para la certificación de minerales bajo estándares internacionales, atrayendo inversión formal y garantizando transparencia.</p>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-4xl mb-4 text-center">⚽</div>
-                        <h3 class="text-xl font-bold text-center text-gray-700">Rearticulación del Sistema Deportivo</h3>
-                        <p class="text-justify mt-2 text-gray-600">Revitalización de la infraestructura y los programas deportivos municipales para fomentar la salud, la disciplina y la cohesión social en los jóvenes.</p>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-4xl mb-4 text-center">🎭</div>
-                        <h3 class="text-xl font-bold text-center text-gray-700">Impulso Cultural y Social</h3>
-                        <p class="text-justify mt-2 text-gray-600">Lanzamiento de un programa integral de atención social y fomento cultural para fortalecer la identidad local y el bienestar comunitario.</p>
-                    </div>
+                    <!-- Development cards will be dynamically inserted here -->
                 </div>
             </div>
         </section>
 
-        <section id="plan" class="py-16 md:py-24 bg-gray-50">
+        <section id="plan" class="py-20 md:py-28">
             <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">El Plan de Acción</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Una hoja de ruta fásica para sentar las bases de la nueva Ciudad Bolívar.</p>
+                <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">El Plan de Acción</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Una hoja de ruta fásica para sentar las bases de la nueva Ciudad Bolívar.</p>
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-1 gap-12 items-start">
-                    <div class="max-w-2xl mx-auto">
-                        <h3 class="text-2xl font-bold text-gray-700 mb-6 text-center">Implementación por Fases</h3>
-                        <div class="space-y-8 border-l-2 ml-4 pl-8" style="border-color: #B8D37B;">
-                            <div class="relative">
-                                <div class="absolute -left-10 h-5 w-5 rounded-full mt-1.5 border-4 border-white" style="background-color: #2A6B72;"></div>
-                                <h4 class="text-xl font-bold text-gray-800">Fase I: Cimientos (Años 1-2)</h4>
-                                <p class="text-gray-600 mt-1">Creación de la Dirección Municipal de Desarrollo Tecnológico y la Dirección Municipal de Banca Digital, Criptoactivos y Actividades Conexas, marco legal y proyectos piloto de alto impacto (Agua, WiFi, Gobierno Digital) para generar confianza.</p>
-                            </div>
-                            <div class="relative">
-                               <div class="absolute -left-10 h-5 w-5 bg-gray-300 rounded-full mt-1.5 border-4 border-white"></div>
-                                <h4 class="text-xl font-bold text-gray-800">Fase II: Escalamiento (Años 3-5)</h4>
-                                <p class="text-gray-600 mt-1">Expansión de proyectos exitosos (Red Eléctrica Inteligente, Gestión de Residuos) e integración en una Plataforma de Datos Urbanos.</p>
-                            </div>
-                            <div class="relative">
-                                <div class="absolute -left-10 h-5 w-5 bg-gray-300 rounded-full mt-1.5 border-4 border-white"></div>
-                                <h4 class="text-xl font-bold text-gray-800">Fase III: Inteligencia (Años 6+)</h4>
-                                <p class="text-gray-600 mt-1">Uso de IA para mantenimiento predictivo y consolidación de la economía del conocimiento.</p>
-                            </div>
+                <div class="max-w-3xl mx-auto">
+                    <h3 class="text-3xl font-bold text-gray-700 mb-8 text-center">Implementación por Fases</h3>
+                    <div class="relative border-l-4 ml-6 pl-10" style="border-color: #B8D37B;">
+                        <div class="mb-12">
+                            <div class="absolute w-6 h-6 rounded-full -left-3.5 mt-1.5" style="background-color: #2A6B72;"></div>
+                            <h4 class="text-2xl font-bold text-gray-800">Fase I: Cimientos (Años 1-2)</h4>
+                            <p class="text-gray-600 mt-2">Creación de la Dirección Municipal de Desarrollo Tecnológico y la Dirección Municipal de Banca Digital, Criptoactivos y Actividades Conexas, marco legal y proyectos piloto de alto impacto (Agua, WiFi, Gobierno Digital) para generar confianza.</p>
+                        </div>
+                        <div class="mb-12">
+                           <div class="absolute w-6 h-6 bg-gray-300 rounded-full -left-3.5 mt-1.5"></div>
+                            <h4 class="text-2xl font-bold text-gray-800">Fase II: Escalamiento (Años 3-5)</h4>
+                            <p class="text-gray-600 mt-2">Expansión de proyectos exitosos (Red Eléctrica Inteligente, Gestión de Residuos) e integración en una Plataforma de Datos Urbanos.</p>
+                        </div>
+                        <div>
+                            <div class="absolute w-6 h-6 bg-gray-300 rounded-full -left-3.5 mt-1.5"></div>
+                            <h4 class="text-2xl font-bold text-gray-800">Fase III: Inteligencia (Años 6+)</h4>
+                            <p class="text-gray-600 mt-2">Uso de IA para mantenimiento predictivo y consolidación de la economía del conocimiento.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="proyectos" class="py-16 md:py-24 bg-white">
+        <section id="proyectos" class="py-20 md:py-28 bg-white">
             <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Proyectos Clave en Foco</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Explora las iniciativas emblemáticas que marcarán el inicio de la transformación de Ciudad Bolívar.</p>
+                <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Proyectos Clave en Foco</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Explora las iniciativas emblemáticas que marcarán el inicio de la transformación de Ciudad Bolívar.</p>
                 </div>
-                <div>
-                    <div id="tabs-container" class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">
-                        <!-- Tab buttons will be dynamically inserted here -->
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-center mb-8">
+                        <div id="tabs-container" class="inline-flex space-x-2 bg-gray-200/70 p-1.5 rounded-full">
+                            <!-- Tab buttons will be dynamically inserted here -->
+                        </div>
                     </div>
-                    <div id="tab-content" class="bg-gray-50 p-6 md:p-8 rounded-lg shadow-inner min-h-[300px]">
+                    <div id="tab-content" class="p-4 md:p-8 min-h-[300px]">
                         <!-- Tab content will be dynamically inserted here -->
                     </div>
                 </div>
@@ -239,67 +231,44 @@
     
     <footer style="background-color: #2A6B72;" class="text-white">
         <div class="container mx-auto px-6 py-12 text-center">
+            <h3 class="text-2xl font-title font-bold mb-6 text-white">Redes Sociales</h3>
+            <div class="flex justify-center items-center space-x-12 mb-10">
+                <a href="https://www.instagram.com/partidodelareconciliacion" target="_blank" class="flex flex-col items-center text-gray-300 hover:text-white transform hover:scale-110 transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-instagram"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    <span class="mt-2 text-lg font-semibold">Instagram</span>
+                </a>
+                <a href="https://www.tiktok.com/@partidonacional2025" target="_blank" class="flex flex-col items-center text-gray-300 hover:text-white transform hover:scale-110 transition-all duration-300">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3V0Z"/>
+                   </svg>
+                   <span class="mt-2 text-lg font-semibold">TikTok</span>
+                </a>
+            </div>
             <img src="https://i.imgur.com/qBfDlGn.png" alt="Logo PRN Bolívar" class="h-24 w-24 rounded-full shadow-lg border-2 mx-auto mb-6" style="border-color: #B8D37B;">
-            <h2 class="text-2xl md:text-3xl font-bold">Forjando un Nuevo Contrato Social</h2>
-            <p class="mt-4 max-w-3xl mx-auto text-gray-200">Angostura Inteligente es la oportunidad de que la cuna de la República sea también la cuna de una nueva visión para Venezuela, basada en la eficiencia, la transparencia y la participación.</p>
+            <h2 class="text-3xl font-title font-bold">Forjando un Nuevo Contrato Social</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-gray-300">Angostura Inteligente es la oportunidad de que la cuna de la República sea también la cuna de una nueva visión para Venezuela, basada en la eficiencia, la transparencia y la participación.</p>
         </div>
     </footer>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         
-        const wrapLabel = (label, maxLength = 16) => {
-            if (typeof label !== 'string' || label.length <= maxLength) {
-                return label;
-            }
-            const words = label.split(' ');
-            const lines = [];
-            let currentLine = '';
-            words.forEach(word => {
-                if ((currentLine + ' ' + word).trim().length > maxLength) {
-                    lines.push(currentLine.trim());
-                    currentLine = word;
-                } else {
-                    currentLine = (currentLine + ' ' + word).trim();
-                }
-            });
-            if (currentLine) {
-                lines.push(currentLine.trim());
-            }
-            return lines;
-        };
-
-        const tooltipTitleCallback = (tooltipItems) => {
-            const item = tooltipItems[0];
-            let label = item.chart.data.labels[item.dataIndex];
-            if (Array.isArray(label)) {
-                return label.join(' ');
-            }
-            return label;
-        };
-
         const chartDefaultOptions = {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
-                    callbacks: {
-                        title: tooltipTitleCallback
-                    }
+                    backgroundColor: '#333',
+                    titleFont: { size: 14, family: 'Poppins' },
+                    bodyFont: { size: 12, family: 'Lato' },
+                    padding: 10,
+                    cornerRadius: 3
                 }
             },
             scales: {
-                y: {
-                    ticks: { color: '#6B7280' },
-                    grid: { color: '#E5E7EB' }
-                },
-                x: {
-                    ticks: { color: '#6B7280' },
-                    grid: { display: false }
-                }
+                y: { ticks: { color: '#6B7280', font: { family: 'Lato' } }, grid: { color: '#E5E7EB' } },
+                x: { ticks: { color: '#6B7280', font: { family: 'Lato' } }, grid: { display: false } }
             }
         };
 
@@ -312,23 +281,17 @@
                 datasets: [{
                     data: [27.5, 72.5],
                     backgroundColor: ['#2A6B72', '#B8D37B'],
-                    borderColor: '#FFFFFF',
+                    borderColor: '#F8F9FA',
                     borderWidth: 4
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                ...chartDefaultOptions,
                 plugins: {
+                    ...chartDefaultOptions.plugins,
                     legend: {
                         position: 'bottom',
-                        labels: { color: '#4B5563' }
-                    },
-                    tooltip: {
-                        callbacks: {
-                             title: (tooltipItems) => tooltipItems[0].label,
-                             label: (context) => `${context.parsed}%`
-                        }
+                        labels: { color: '#495057', font: { family: 'Lato' } }
                     }
                 }
             }
@@ -344,7 +307,7 @@
                     label: 'Muertes violentas por 100k hab.',
                     data: [34.2, 18.0],
                     backgroundColor: ['#2A6B72', '#B8D37B'],
-                    barThickness: 50,
+                    borderRadius: 4
                 }]
             },
             options: { ...chartDefaultOptions }
@@ -363,61 +326,72 @@
         const axesGrid = document.getElementById('axes-grid');
         axesData.forEach(axis => {
             const card = document.createElement('div');
-            card.className = 'bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer';
+            card.className = 'bg-gray-50/50 p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 text-center';
             card.innerHTML = `
-                <div class="text-4xl mb-4 text-center">${axis.icon}</div>
-                <h3 class="text-xl font-bold text-center text-gray-800">${axis.title}</h3>
-                <p class="text-gray-600 mt-2 text-justify text-sm">${axis.desc}</p>
+                <div class="text-5xl mb-5 inline-block">${axis.icon}</div>
+                <h3 class="text-xl font-bold text-gray-800 font-title">${axis.title}</h3>
+                <p class="text-gray-600 mt-3 text-justify text-sm leading-relaxed">${axis.desc}</p>
             `;
             axesGrid.appendChild(card);
+        });
+        
+        // Development Projects
+        const devData = [
+            { icon: '🌿', title: 'Proyecto Cáñamo Industrial', desc: 'Impulso a la siembra y procesamiento de cáñamo para la producción y exportación de biodiesel, posicionando a la región en la vanguardia de las energías limpias.' },
+            { icon: '⚡️', title: 'Adecuación de Transmisión Eléctrica', desc: 'Modernización y fortalecimiento de la infraestructura de transmisión para garantizar un suministro estable y confiable, clave para la industrialización.' },
+            { icon: '💎', title: 'Planta Procesadora de Minerales', desc: 'Establecimiento de una planta procesadora en la zona limítrofe con Sucre para transformar la riqueza del subsuelo en desarrollo industrial, agregando valor local a la producción y generando un nuevo polo económico.' },
+            { icon: '📜', title: 'Oficina de Certificación NI 43-101', desc: 'Apertura de una oficina para la certificación de minerales bajo estándares internacionales, atrayendo inversión formal y garantizando transparencia.' },
+            { icon: '⚽', title: 'Rearticulación del Sistema Deportivo', desc: 'Revitalización de la infraestructura y los programas deportivos municipales para fomentar la salud, la disciplina y la cohesión social en los jóvenes.' },
+            { icon: '🎭', title: 'Impulso Cultural y Social', desc: 'Lanzamiento de un programa integral de atención social y fomento cultural para fortalecer la identidad local y el bienestar comunitario.' }
+        ];
+        const devGrid = document.querySelector('#desarrollo .grid');
+        devData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 text-center';
+            card.innerHTML = `
+                <div class="text-5xl mb-5 inline-block">${item.icon}</div>
+                <h3 class="text-xl font-bold text-gray-800 font-title">${item.title}</h3>
+                <p class="text-gray-600 mt-3 text-justify text-sm leading-relaxed">${item.desc}</p>
+            `;
+            devGrid.appendChild(card);
         });
 
         // Key Projects Tabs
         const projectsData = [
-            {
-                id: 'agua',
-                title: 'Agua Segura, Ciudad Sana',
-                content: `
-                    <h4 class="font-bold text-lg text-gray-700">Problema a Resolver:</h4>
-                    <p class="text-gray-600 mb-4">Suministro intermitente, ineficiente y de calidad dudosa, con masivas fugas en una red envejecida.</p>
-                    <h4 class="font-bold text-lg text-gray-700">Solución Tecnológica:</h4>
-                    <p class="text-gray-600 mb-4">Despliegue de una red de sensores inteligentes para detectar fugas en tiempo real, monitorear la calidad del agua (pH, turbidez) y optimizar la distribución con una plataforma centralizada de IA.</p>
-                    <h4 class="font-bold text-lg text-gray-700">Impacto Esperado:</h4>
-                    <p class="text-gray-600">Reducción drástica de agua perdida, mejora en la continuidad del servicio, alertas tempranas de contaminación y una base de datos invaluable para la planificación futura.</p>
-                `
-            },
-            {
-                id: 'gobierno',
-                title: 'Gobierno a un Clic',
-                content: `
-                    <h4 class="font-bold text-lg text-gray-700">Problema a Resolver:</h4>
-                    <p class="text-gray-600 mb-4">Una relación rota entre ciudadano y municipio, marcada por la burocracia, opacidad y corrupción.</p>
-                    <h4 class="font-bold text-lg text-gray-700">Solución Tecnológica:</h4>
-                    <p class="text-gray-600 mb-4">Creación del portal y app "Mi Bolívar" como ventanilla única para el 100% de los trámites. Incluirá un chatbot 24/7, una plataforma de presupuestos participativos y un sistema para reportar problemas de servicios públicos (City-Report).</p>
-                    <h4 class="font-bold text-lg text-gray-700">Impacto Esperado:</h4>
-                    <p class="text-gray-600">Reducción radical de la corrupción, aumento de la recaudación y reconstrucción de la confianza ciudadana con un gobierno transparente y eficiente.</p>
-                `
-            },
-            {
-                id: 'luz',
-                title: 'Luz para el Progreso',
-                content: `
-                    <h4 class="font-bold text-lg text-gray-700">Problema a Resolver:</h4>
-                    <p class="text-gray-600 mb-4">Cortes eléctricos constantes y fluctuaciones que dañan equipos, paralizan la economía y generan inseguridad.</p>
-                    <h4 class="font-bold text-lg text-gray-700">Solución Tecnológica:</h4>
-                    <p class="text-gray-600 mb-4">Modernización de un circuito piloto que tendrá Redes con medidores inteligentes (lectura remota, facturación precisa), automatización de la red para aislar fallas rápidamente, y una plataforma para que los ciudadanos gestionen su consumo.</p>
-                    <h4 class="font-bold text-lg text-gray-700">Impacto Esperado:</h4>
-                    <p class="text-gray-600">Mejora sustancial en la estabilidad y calidad del servicio, reducción de pérdidas y empoderamiento del consumidor. Sienta las bases para integrar energías renovables.</p>
-                `
-            }
+            { id: 'agua', title: 'Agua Segura, Ciudad Sana' },
+            { id: 'gobierno', title: 'Gobierno a un Clic' },
+            { id: 'luz', title: 'Luz para el Progreso' }
         ];
+        const projectsContent = {
+            agua: `
+                <h4 class="text-2xl font-bold text-gray-700 font-title">Problema a Resolver</h4>
+                <p class="text-gray-600 mt-2 mb-6">Suministro intermitente, ineficiente y de calidad dudosa, con masivas fugas en una red envejecida.</p>
+                <h4 class="text-2xl font-bold text-gray-700 font-title">Solución Tecnológica</h4>
+                <p class="text-gray-600 mt-2 mb-6">Despliegue de una red de sensores inteligentes para detectar fugas en tiempo real, monitorear la calidad del agua (pH, turbidez) y optimizar la distribución con una plataforma centralizada de IA.</p>
+                <h4 class="text-2xl font-bold text-gray-700 font-title">Impacto Esperado</h4>
+                <p class="text-gray-600 mt-2">Reducción drástica de agua perdida, mejora en la continuidad del servicio, alertas tempranas de contaminación y una base de datos invaluable para la planificación futura.</p>`,
+            gobierno: `
+                <h4 class="text-2xl font-bold text-gray-700 font-title">Problema a Resolver</h4>
+                <p class="text-gray-600 mt-2 mb-6">Una relación rota entre ciudadano y municipio, marcada por la burocracia, opacidad y corrupción.</p>
+                <h4 class="text-2xl font-bold text-gray-700 font-title">Solución Tecnológica</h4>
+                <p class="text-gray-600 mt-2 mb-6">Creación del portal y app "Mi Bolívar" como ventanilla única para el 100% de los trámites. Incluirá un chatbot 24/7, una plataforma de presupuestos participativos y un sistema para reportar problemas de servicios públicos (City-Report).</p>
+                <h4 class="text-2xl font-bold text-gray-700 font-title">Impacto Esperado</h4>
+                <p class="text-gray-600 mt-2">Reducción radical de la corrupción, aumento de la recaudación y reconstrucción de la confianza ciudadana con un gobierno transparente y eficiente.</p>`,
+            luz: `
+                <h4 class="text-2xl font-bold text-gray-700 font-title">Problema a Resolver</h4>
+                <p class="text-gray-600 mt-2 mb-6">Cortes eléctricos constantes y fluctuaciones que dañan equipos, paralizan la economía y generan inseguridad.</p>
+                <h4 class="text-2xl font-bold text-gray-700 font-title">Solución Tecnológica</h4>
+                <p class="text-gray-600 mt-2 mb-6">Modernización de un circuito piloto que tendrá Redes con medidores inteligentes (lectura remota, facturación precisa), automatización de la red para aislar fallas rápidamente, y una plataforma para que los ciudadanos gestionen su consumo.</p>
+                <h4 class="text-2xl font-bold text-gray-700 font-title">Impacto Esperado</h4>
+                <p class="text-gray-600 mt-2">Mejora sustancial en la estabilidad y calidad del servicio, reducción de pérdidas y empoderamiento del consumidor. Sienta las bases para integrar energías renovables.</p>`
+        };
 
         const tabsContainer = document.getElementById('tabs-container');
         const tabContentContainer = document.getElementById('tab-content');
 
-        projectsData.forEach((project, index) => {
+        projectsData.forEach((project) => {
             const button = document.createElement('button');
-            button.className = `tab-btn px-4 py-2 text-sm md:text-base font-medium rounded-full transition-all duration-300 ${index === 0 ? 'active' : 'bg-white text-gray-600 hover:bg-gray-100'}`;
+            button.className = 'tab-btn px-6 py-2 text-base font-semibold rounded-full transition-all duration-300';
             button.textContent = project.title;
             button.dataset.tab = project.id;
             tabsContainer.appendChild(button);
@@ -426,16 +400,15 @@
         const tabButtons = document.querySelectorAll('.tab-btn');
         
         function updateTabContent(tabId) {
-            const project = projectsData.find(p => p.id === tabId);
-            tabContentContainer.innerHTML = project.content;
-
+            tabContentContainer.innerHTML = projectsContent[tabId];
             tabButtons.forEach(btn => {
-                if (btn.dataset.tab === tabId) {
-                    btn.classList.add('active');
-                    btn.classList.remove('bg-white', 'text-gray-600', 'hover:bg-gray-100');
+                const isActive = btn.dataset.tab === tabId;
+                if (isActive) {
+                    btn.style.backgroundColor = '#B8D37B';
+                    btn.style.color = '#2A6B72';
                 } else {
-                    btn.classList.remove('active');
-                    btn.classList.add('bg-white', 'text-gray-600', 'hover:bg-gray-100');
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.color = '#495057';
                 }
             });
         }
@@ -446,9 +419,9 @@
             }
         });
 
-        // Load initial tab
         updateTabContent(projectsData[0].id);
     });
     </script>
 </body>
 </html>
+
