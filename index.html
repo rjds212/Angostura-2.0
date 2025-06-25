@@ -9,18 +9,134 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Refined PRN Teal & Lime (#2A6B72, #B8D37B) on Neutrals -->
-    <!-- Application Structure Plan: The SPA is designed as a narrative journey. 1) 'El Desafío' presents the crisis. 2) 'La Visión' introduces the strategic axes. 3) 'El Candidato' introduces the leader. 4) 'Desarrollo' details diversification plans. 5) 'El Plan' shows the timeline. 6) 'Proyectos Clave' allows drill-down. 7) 'Participa' enables user proposals. This structure guides the user from problem to solution to action. -->
-    <!-- Visualization & Content Choices: 
-        - Policrisis Data -> Goal: Inform/Compare -> Donut & Bar Charts (Chart.js/Canvas). Justification: Effectively shows proportions and comparisons for key crisis metrics. Interaction: Tooltips.
-        - 6 Strategic Axes -> Goal: Organize -> Interactive HTML/CSS Cards. Justification: Organizes the core pillars of the plan cleanly.
-        - Candidate Bio -> Goal: Inform -> HTML/CSS two-column layout. Justification: Classic, professional way to introduce a person.
-        - Economic Development -> Goal: Organize/Inform -> HTML/CSS Cards. Justification: Presents diverse new projects in a clear, digestible format.
-        - Implementation Phases -> Goal: Change -> HTML/CSS Timeline. Justification: Clearly visualizes the sequence of actions over time.
-        - Emblematic Projects -> Goal: Inform/Organize -> HTML/CSS Tabbed Interface. Justification: Structures detailed content in a compact, user-controlled manner.
-        - Proposal Form -> Goal: Interact -> HTML Form with JS mailto. Justification: Allows users to submit ideas directly via their email client, a simple and effective solution without a backend.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, increment, arrayUnion, setLogLevel } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO_KEY", authDomain: "DEMO.firebaseapp.com", projectId: "DEMO_PROJECT" };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        let proposalsListener = null;
+        
+        const startApp = async (user) => {
+            const userId = user.uid;
+            
+            if (proposalsListener) proposalsListener();
+
+            const proposalsPath = `artifacts/${appId}/public/data/proposals`;
+            const proposalsCollection = collection(db, proposalsPath);
+            const q = query(proposalsCollection, orderBy("createdAt", "desc"));
+
+            proposalsListener = onSnapshot(q, (querySnapshot) => {
+                const proposalsContainer = document.getElementById('proposals-feed');
+                if (!proposalsContainer) return;
+                proposalsContainer.innerHTML = '';
+                if (querySnapshot.empty) {
+                    proposalsContainer.innerHTML = `<p class="text-center text-gray-500 col-span-full">Aún no hay propuestas. ¡Sé el primero en compartir tu idea!</p>`;
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const proposal = doc.data();
+                        const proposalId = doc.id;
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-6 rounded-lg shadow-md';
+                        
+                        const userHasVoted = proposal.voters && proposal.voters.includes(userId);
+                        
+                        card.innerHTML = `
+                            <p class="text-gray-800 text-lg">"${proposal.proposal}"</p>
+                            <p class="text-right text-sm font-bold mt-4 text-[#2A6B72]">- ${proposal.name}</p>
+                            <div class="flex justify-end items-center mt-4 pt-4 border-t border-gray-200 space-x-6">
+                                <button data-id="${proposalId}" data-action="like" ${userHasVoted ? 'disabled' : ''} class="flex items-center space-x-2 text-gray-500 ${userHasVoted ? 'opacity-50' : 'hover:text-green-500'} transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                                    <span class="font-semibold">${proposal.likes || 0}</span>
+                                </button>
+                                <button data-id="${proposalId}" data-action="dislike" ${userHasVoted ? 'disabled' : ''} class="flex items-center space-x-2 text-gray-500 ${userHasVoted ? 'opacity-50' : 'hover:text-red-500'} transition-colors">
+                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v7a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path></svg>
+                                    <span class="font-semibold">${proposal.dislikes || 0}</span>
+                                </button>
+                            </div>
+                        `;
+                        proposalsContainer.appendChild(card);
+                    });
+                }
+            });
+
+            document.getElementById('proposals-feed').addEventListener('click', async (e) => {
+                const button = e.target.closest('button[data-id]');
+                if (button && !button.disabled) {
+                    const id = button.dataset.id;
+                    const action = button.dataset.action;
+                    const proposalRef = doc(db, proposalsPath, id);
+                    
+                    try {
+                        const updateData = {
+                            voters: arrayUnion(userId)
+                        };
+                        if (action === 'like') {
+                            updateData.likes = increment(1);
+                        } else if (action === 'dislike') {
+                            updateData.dislikes = increment(1);
+                        }
+                        await updateDoc(proposalRef, updateData);
+                    } catch (error) {
+                        console.error("Error updating document: ", error);
+                    }
+                }
+            });
+
+            document.getElementById('proposal-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value;
+                const proposal = document.getElementById('proposal').value;
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Enviando...';
+
+                try {
+                    await addDoc(collection(db, proposalsPath), {
+                        name: name,
+                        proposal: proposal,
+                        likes: 0,
+                        dislikes: 0,
+                        voters: [],
+                        createdAt: new Date()
+                    });
+                    e.target.reset();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Enviar Propuesta';
+                }
+            });
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                startApp(user);
+            } else {
+                 try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                       await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                       await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Initial sign-in failed, trying anonymous sign-in as fallback:", error);
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (anonymousError) {
+                         console.error("Anonymous sign-in also failed:", anonymousError);
+                    }
+                }
+            }
+        });
+    </script>
     <style>
         body {
             font-family: 'Lato', sans-serif;
@@ -114,6 +230,7 @@
             <div class="hidden md:flex items-center space-x-10">
                 <a href="#vision" class="nav-link text-gray-200 font-semibold">La Visión</a>
                 <a href="#candidato" class="nav-link text-gray-200 font-semibold">El Candidato</a>
+                <a href="#testimonios" class="nav-link text-gray-200 font-semibold">Testimonios</a>
                 <a href="#desarrollo" class="nav-link text-gray-200 font-semibold">Desarrollo</a>
                 <a href="#plan" class="nav-link text-gray-200 font-semibold">El Plan</a>
                 <a href="#proyectos" class="nav-link text-gray-200 font-semibold">Proyectos</a>
@@ -207,7 +324,31 @@
             </div>
         </section>
         
-        <section id="desarrollo" class="py-20 md:py-28 bg-white">
+        <section id="testimonios" class="py-20 md:py-28 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Voces de Apoyo al Proyecto</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Líderes comunitarios y empresarios locales respaldan la visión de una Angostura Inteligente.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-gray-50 p-8 rounded-lg">
+                        <p class="text-lg text-gray-700 italic">"Una red eléctrica estable es el primer paso para reactivar nuestros comercios. Con energía confiable, podemos volver a producir y a generar empleos para nuestra gente."</p>
+                        <p class="mt-4 font-bold text-right">- María Rodríguez, Comerciante del Casco Histórico</p>
+                    </div>
+                    <div class="bg-gray-50 p-8 rounded-lg">
+                        <p class="text-lg text-gray-700 italic">"La seguridad es más que policías; es tener calles iluminadas y un transporte donde nuestros hijos puedan volver a casa tranquilos. Este plan entiende eso."</p>
+                        <p class="mt-4 font-bold text-right">- Carlos Mendoza, Líder Comunitario de Vista Hermosa</p>
+                    </div>
+                    <div class="bg-gray-50 p-8 rounded-lg">
+                        <p class="text-lg text-gray-700 italic">"Atraer inversión seria requiere transparencia y reglas claras. La oficina de certificación de minerales y las alianzas público-privadas son la señal que el sector productivo estaba esperando."</p>
+                        <p class="mt-4 font-bold text-right">- Ing. Sofía Contreras, Consultora Minera</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="desarrollo" class="py-20 md:py-28">
             <div class="container mx-auto px-6">
                  <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
@@ -220,7 +361,7 @@
             </div>
         </section>
 
-        <section id="plan" class="py-20 md:py-28">
+        <section id="plan" class="py-20 md:py-28 bg-white">
             <div class="container mx-auto px-6">
                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
@@ -250,7 +391,7 @@
             </div>
         </section>
 
-        <section id="proyectos" class="py-20 md:py-28 bg-white">
+        <section id="proyectos" class="py-20 md:py-28">
             <div class="container mx-auto px-6">
                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
@@ -270,50 +411,33 @@
             </div>
         </section>
 
-        <section id="participa" class="py-20 md:py-28">
+        <section id="participa" class="py-20 md:py-28 bg-white">
             <div class="container mx-auto px-6">
                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
-                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Participa: Envía tu Propuesta</h2>
-                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Tu voz es fundamental para construir el futuro de Angostura. Comparte tus ideas y sé parte del cambio.</p>
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Muro de Ideas en Vivo</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Tu voz es fundamental. Comparte tus ideas y vota por las propuestas de otros ciudadanos para construir juntos el futuro de Angostura.</p>
                 </div>
-                <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
-                    <form id="proposal-form">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div id="proposals-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                   <!-- Real-time proposals will be injected here -->
+                </div>
+                
+                <div class="max-w-2xl mx-auto">
+                     <h3 class="text-3xl font-bold text-gray-800 text-center mb-8">Envía tu Propuesta</h3>
+                     <form id="proposal-form" class="bg-gray-50 p-8 rounded-xl shadow-md">
+                        <div class="grid grid-cols-1 gap-6">
                             <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                                <label for="name" class="block text-sm font-medium text-gray-700">Tu Nombre</label>
                                 <input type="text" id="name" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
-                            </div>
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                                <input type="email" id="email" name="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
                             </div>
                         </div>
                         <div class="mt-6">
                              <label for="proposal" class="block text-sm font-medium text-gray-700">Tu Propuesta</label>
-                             <textarea id="proposal" name="proposal" rows="6" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
-                        </div>
-                         <div class="mt-6">
-                            <label for="file-upload" class="block text-sm font-medium text-gray-700">Adjuntar Archivo (Opcional)</label>
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                <div class="space-y-1 text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <div class="flex text-sm text-gray-600">
-                                        <label for="file-upload-input" class="relative cursor-pointer bg-white rounded-md font-medium text-[#2A6B72] hover:text-[#B8D37B] focus-within:outline-none">
-                                            <span>Sube un archivo</span>
-                                            <input id="file-upload-input" name="file-upload" type="file" class="sr-only">
-                                        </label>
-                                        <p class="pl-1">o arrástralo aquí</p>
-                                    </div>
-                                    <p class="text-xs text-gray-500" id="file-name">PDF, DOCX, JPG hasta 10MB</p>
-                                </div>
-                            </div>
-                             <p class="mt-2 text-xs text-gray-500">Nota: Al enviar, se abrirá tu cliente de correo. Deberás adjuntar el archivo manualmente.</p>
+                             <textarea id="proposal" name="proposal" rows="4" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
                         </div>
                         <div class="mt-8 text-right">
-                            <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white transition-colors" style="background-color: #2A6B72; hover:background-color: #388e99;">Enviar Propuesta</button>
+                            <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white transition-colors" style="background-color: #2A6B72; hover:background-color: #388e99;">Compartir Idea</button>
                         </div>
                     </form>
                 </div>
@@ -342,8 +466,18 @@
             <p class="mt-4 max-w-3xl mx-auto text-gray-300">Angostura Inteligente es la oportunidad de que la cuna de la República sea también la cuna de una nueva visión para Venezuela, basada en la eficiencia, la transparencia y la participación.</p>
         </div>
     </footer>
+    
+    <!-- Modal Structure -->
+    <div id="axis-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl transform transition-all" id="modal-content">
+            <!-- Modal content will be injected here -->
+        </div>
+    </div>
 
-    <script>
+
+    <script type="module">
+        // Chart.js and other non-Firebase JS remains the same.
+        // The Firebase logic is now at the top in its own script tag.
     document.addEventListener('DOMContentLoaded', () => {
         
         const chartDefaultOptions = {
@@ -408,24 +542,87 @@
 
         // Vision Axes
         const axesData = [
-            { icon: '🏛️', title: 'Gobernanza Inteligente', desc: 'Digitalización total de trámites, datos abiertos y participación ciudadana para erradicar la burocracia.' },
-            { icon: '💡', title: 'Infraestructura Resiliente', desc: 'Redes inteligentes de energía y agua para garantizar servicios eficientes y confiables para todos.' },
-            { icon: '🚌', title: 'Movilidad Integrada', desc: 'Transporte público seguro y eficiente, con pago único y semaforización inteligente para optimizar el flujo.' },
-            { icon: '🛡️', title: 'Seguridad y Prevención', desc: 'Videovigilancia con IA, botones de pánico y plataformas de denuncia para un enfoque proactivo contra el delito.' },
-            { icon: '📈', title: 'Economía y Turismo 4.0', desc: 'Incubación de startups y experiencias turísticas inmersivas para reactivar y diversificar la economía local.' },
-            { icon: '🌳', title: 'Sostenibilidad y Patrimonio', desc: 'Monitoreo ambiental con sensores en el río Orinoco y otros puntos de la ciudad, con una gestión inteligente de desechos solidos.' }
+            { id: 'gobernanza', icon: '🏛️', title: 'Gobernanza Inteligente', desc: 'Digitalización total de trámites, datos abiertos y participación ciudadana para erradicar la burocracia.', impact: [
+                'Reducción del 80% en el tiempo para trámites municipales.',
+                'Ahorro estimado de 15% en el presupuesto operativo por eficiencia.',
+                'Publicación del 100% de los contratos públicos en tiempo real.'
+            ]},
+            { id: 'infraestructura', icon: '💡', title: 'Infraestructura Resiliente', desc: 'Redes inteligentes de energía y agua para garantizar servicios eficientes y confiables para todos.', impact: [
+                'Ahorro proyectado del 20% en la factura eléctrica de los hogares.',
+                'Continuidad del servicio de agua potable del 99% en zonas piloto.',
+                'Reducción del 50% en el tiempo de respuesta a fallas eléctricas.'
+            ]},
+            { id: 'movilidad', icon: '�', title: 'Movilidad Integrada', desc: 'Transporte público seguro y eficiente, con pago único y semaforización inteligente para optimizar el flujo.', impact: [
+                'Disminución de 30 minutos en el tiempo de viaje promedio diario.',
+                'Aumento del 50% en la cobertura del transporte público en parroquias periféricas.',
+                'Reducción del 25% en accidentes de tráfico en corredores principales.'
+            ]},
+            { id: 'seguridad', icon: '🛡️', title: 'Seguridad y Prevención', desc: 'Videovigilancia con IA, botones de pánico y plataformas de denuncia para un enfoque proactivo contra el delito.', impact: [
+                'Reducción proyectada del 40% en robos en zonas con alumbrado y cámaras inteligentes.',
+                'Tiempo de respuesta a emergencias ciudadanas inferior a 5 minutos.',
+                'Aumento del 60% en la tasa de resolución de denuncias de violencia de género.'
+            ]},
+            { id: 'economia', icon: '📈', title: 'Economía y Turismo 4.0', desc: 'Incubación de startups y experiencias turísticas inmersivas para reactivar y diversificar la economía local.', impact: [
+                'Creación de 5,000 nuevos empleos en el sector tecnológico y turístico en 4 años.',
+                'Aumento del 150% en el ingreso de turistas internacionales.',
+                'Establecimiento de al menos 50 nuevas startups de base tecnológica.'
+            ]},
+            { id: 'sostenibilidad', icon: '🌳', title: 'Sostenibilidad y Patrimonio', desc: 'Monitoreo ambiental con sensores en el río Orinoco y otros puntos de la ciudad, con una gestión inteligente de desechos solidos.', impact: [
+                'Aumento del 70% en la tasa de reciclaje municipal.',
+                'Reducción del 50% en la contaminación del aire en el centro histórico.',
+                'Protección efectiva del 100% de las zonas de ribera del Orinoco.'
+            ]}
         ];
 
         const axesGrid = document.getElementById('axes-grid');
+        const modal = document.getElementById('axis-modal');
+        const modalContent = document.getElementById('modal-content');
+
         axesData.forEach(axis => {
             const card = document.createElement('div');
-            card.className = 'bg-gray-50/50 p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 text-center';
+            card.className = 'bg-gray-50/50 p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 text-center cursor-pointer';
+            card.dataset.axisId = axis.id;
             card.innerHTML = `
                 <div class="text-5xl mb-5 inline-block">${axis.icon}</div>
                 <h3 class="text-xl font-bold text-gray-800 font-title">${axis.title}</h3>
                 <p class="text-gray-600 mt-3 text-justify text-sm leading-relaxed">${axis.desc}</p>
             `;
             axesGrid.appendChild(card);
+        });
+        
+        axesGrid.addEventListener('click', (e) => {
+            const card = e.target.closest('[data-axis-id]');
+            if (!card) return;
+
+            const axisId = card.dataset.axisId;
+            const axisData = axesData.find(a => a.id === axisId);
+
+            modalContent.innerHTML = `
+                <div class="p-8">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-3xl font-bold text-gray-800 font-title">${axisData.title}</h3>
+                        <button id="close-modal" class="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+                    </div>
+                    <p class="mt-2 text-gray-600">${axisData.desc}</p>
+                    <div class="mt-6 border-t pt-6">
+                        <h4 class="text-xl font-bold text-[#2A6B72] font-title mb-4">Datos de Impacto Directo</h4>
+                        <ul class="space-y-3">
+                            ${axisData.impact.map(item => `<li class="flex items-start"><span class="text-green-500 mr-3 mt-1">&#10003;</span><span>${item}</span></li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            document.getElementById('close-modal').addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
         });
         
         // Development Projects
@@ -514,31 +711,6 @@
 
         updateTabContent(projectsData[0].id);
 
-        // Proposal Form
-        const form = document.getElementById('proposal-form');
-        const fileInput = document.getElementById('file-upload-input');
-        const fileNameDisplay = document.getElementById('file-name');
-
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                fileNameDisplay.textContent = fileInput.files[0].name;
-            } else {
-                 fileNameDisplay.textContent = 'PDF, DOCX, JPG hasta 10MB';
-            }
-        });
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const proposal = document.getElementById('proposal').value;
-
-            const subject = encodeURIComponent(`Nueva Propuesta de: ${name}`);
-            const body = encodeURIComponent(`Nombre: ${name}\nCorreo: ${email}\n\nPropuesta:\n${proposal}\n\n`);
-            
-            const mailtoLink = `mailto:angosturainteligente@gmail.com?subject=${subject}&body=${body}`;
-            window.location.href = mailtoLink;
-        });
     });
     </script>
 </body>
