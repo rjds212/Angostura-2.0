@@ -15,14 +15,14 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         
-        const firebaseConfig = typeof __firebase_config !== 'undefined' && __firebase_config ? JSON.parse(__firebase_config) : { apiKey: "DEMO_KEY_REPLACE_ME", authDomain: "DEMO_REPLACE.firebaseapp.com", projectId: "DEMO_REPLACE" };
+        const firebaseConfig = typeof __firebase_config !== 'undefined' && __firebase_config ? JSON.parse(__firebase_config) : { apiKey: "DEMO_KEY", authDomain: "DEMO_PROJECT.firebaseapp.com", projectId: "DEMO_PROJECT" };
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         
         let proposalsListener = null;
-        
+
         const startApp = async (user) => {
             const userId = user.uid;
             
@@ -130,6 +130,9 @@
 
                 } catch (error) {
                     console.error("Error adding document: ", error);
+                    const formError = document.getElementById('form-error');
+                    formError.textContent = 'No se pudo enviar la propuesta. Por favor, inténtelo de nuevo.';
+                    formError.classList.remove('hidden');
                 } finally {
                     submitButton.disabled = false;
                     submitButton.textContent = 'Compartir Idea';
@@ -137,21 +140,24 @@
             });
         }
 
-        (async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Firebase Authentication Error:", error);
-            }
-        })();
-
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 startApp(user);
+            } else {
+                 try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                       await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                       await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Initial sign-in failed, trying anonymous sign-in as fallback:", error);
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (anonymousError) {
+                         console.error("Anonymous sign-in also failed:", anonymousError);
+                    }
+                }
             }
         });
     </script>
@@ -457,6 +463,7 @@
                         <div class="mt-8 text-right">
                             <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white transition-colors" style="background-color: #2A6B72; hover:background-color: #388e99;">Compartir Idea</button>
                         </div>
+                        <div id="form-error" class="text-red-500 text-center text-sm mt-4 hidden"></div>
                     </form>
                 </div>
             </div>
@@ -583,7 +590,7 @@
                 'Aumento del 150% en el ingreso de turistas internacionales.',
                 'Establecimiento de al menos 50 nuevas startups de base tecnológica.'
             ]},
-            { id: 'sostenibilidad', icon: '�', title: 'Sostenibilidad y Patrimonio', desc: 'Monitoreo ambiental con sensores en el río Orinoco y otros puntos de la ciudad, con una gestión inteligente de desechos solidos.', impact: [
+            { id: 'sostenibilidad', icon: '🌳', title: 'Sostenibilidad y Patrimonio', desc: 'Monitoreo ambiental con sensores en el río Orinoco y otros puntos de la ciudad, con una gestión inteligente de desechos solidos.', impact: [
                 'Aumento del 70% en la tasa de reciclaje municipal.',
                 'Reducción del 50% en la contaminación del aire en el centro histórico.',
                 'Protección efectiva del 100% de las zonas de ribera del Orinoco.'
@@ -648,7 +655,7 @@
             { icon: '💎', title: 'Planta Procesadora de Minerales', desc: 'Establecimiento de una planta procesadora en la zona limítrofe con Sucre para transformar la riqueza del subsuelo en desarrollo industrial, agregando valor local a la producción y generando un nuevo polo económico.' },
             { icon: '📜', title: 'Oficina de Certificación NI 43-101', desc: 'Apertura de una oficina para la certificación de minerales bajo estándares internacionales, atrayendo inversión formal y garantizando transparencia.' },
             { icon: '⚽', title: 'Rearticulación del Sistema Deportivo', desc: 'Revitalización de la infraestructura y los programas deportivos municipales para fomentar la salud, la disciplina y la cohesión social en los jóvenes.' },
-            { icon: '🎭', title: 'Impulso Cultural y Social', desc: 'Lanzamiento de un programa integral de atención social y fomento cultural para fortalecer la identidad local y el bienestar comunitario.' }
+            { icon: '�', title: 'Impulso Cultural y Social', desc: 'Lanzamiento de un programa integral de atención social y fomento cultural para fortalecer la identidad local y el bienestar comunitario.' }
         ];
         const devGrid = document.querySelector('#desarrollo .grid');
         devData.forEach(item => {
@@ -726,9 +733,7 @@
         });
 
         updateTabContent(projectsData[0].id);
-
     });
     </script>
 </body>
 </html>
-
