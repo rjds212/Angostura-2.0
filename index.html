@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Refined PRN Teal & Lime (#2A6B72, #B8D37B) on Neutrals -->
-    <!-- Application Structure Plan: The SPA is designed as a narrative journey. 1) 'El Desafío' presents the crisis. 2) 'La Visión' introduces the strategic axes. 3) 'El Candidato' introduces the leader. 4) 'Desarrollo' details diversification plans. 5) 'El Plan' shows the timeline. 6) 'Proyectos Clave' allows drill-down. This structure guides the user from problem to solution. -->
+    <!-- Application Structure Plan: The SPA is designed as a narrative journey. 1) 'El Desafío' presents the crisis. 2) 'La Visión' introduces the strategic axes. 3) 'El Candidato' introduces the leader. 4) 'Desarrollo' details diversification plans. 5) 'El Plan' shows the timeline. 6) 'Proyectos Clave' allows drill-down. 7) 'Participa' enables user proposals. This structure guides the user from problem to solution to action. -->
     <!-- Visualization & Content Choices: 
         - Policrisis Data -> Goal: Inform/Compare -> Donut & Bar Charts (Chart.js/Canvas). Justification: Effectively shows proportions and comparisons for key crisis metrics. Interaction: Tooltips.
         - 6 Strategic Axes -> Goal: Organize -> Interactive HTML/CSS Cards. Justification: Organizes the core pillars of the plan cleanly.
@@ -18,6 +18,7 @@
         - Economic Development -> Goal: Organize/Inform -> HTML/CSS Cards. Justification: Presents diverse new projects in a clear, digestible format.
         - Implementation Phases -> Goal: Change -> HTML/CSS Timeline. Justification: Clearly visualizes the sequence of actions over time.
         - Emblematic Projects -> Goal: Inform/Organize -> HTML/CSS Tabbed Interface. Justification: Structures detailed content in a compact, user-controlled manner.
+        - Proposal Form -> Goal: Interact -> HTML Form with JS mailto. Justification: Allows users to submit ideas directly via their email client, a simple and effective solution without a backend.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -111,12 +112,12 @@
                 <span class="text-3xl font-bold text-white font-title">Angostura <span style="color: #B8D37B;">Inteligente</span></span>
             </a>
             <div class="hidden md:flex items-center space-x-10">
-                <a href="#desafio" class="nav-link text-gray-200 font-semibold">El Desafío</a>
                 <a href="#vision" class="nav-link text-gray-200 font-semibold">La Visión</a>
                 <a href="#candidato" class="nav-link text-gray-200 font-semibold">El Candidato</a>
                 <a href="#desarrollo" class="nav-link text-gray-200 font-semibold">Desarrollo</a>
                 <a href="#plan" class="nav-link text-gray-200 font-semibold">El Plan</a>
                 <a href="#proyectos" class="nav-link text-gray-200 font-semibold">Proyectos</a>
+                <a href="#participa" class="nav-link text-gray-200 font-semibold">Participa</a>
             </div>
             <div class="md:hidden">
                 <!-- Mobile menu button can be added here -->
@@ -265,6 +266,56 @@
                     <div id="tab-content" class="p-4 md:p-8 min-h-[300px]">
                         <!-- Tab content will be dynamically inserted here -->
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="participa" class="py-20 md:py-28">
+            <div class="container mx-auto px-6">
+                <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Participa: Envía tu Propuesta</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Tu voz es fundamental para construir el futuro de Angostura. Comparte tus ideas y sé parte del cambio.</p>
+                </div>
+                <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
+                    <form id="proposal-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                                <input type="text" id="name" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                                <input type="email" id="email" name="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                             <label for="proposal" class="block text-sm font-medium text-gray-700">Tu Propuesta</label>
+                             <textarea id="proposal" name="proposal" rows="6" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
+                        </div>
+                         <div class="mt-6">
+                            <label for="file-upload" class="block text-sm font-medium text-gray-700">Adjuntar Archivo (Opcional)</label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                <div class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="file-upload-input" class="relative cursor-pointer bg-white rounded-md font-medium text-[#2A6B72] hover:text-[#B8D37B] focus-within:outline-none">
+                                            <span>Sube un archivo</span>
+                                            <input id="file-upload-input" name="file-upload" type="file" class="sr-only">
+                                        </label>
+                                        <p class="pl-1">o arrástralo aquí</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500" id="file-name">PDF, DOCX, JPG hasta 10MB</p>
+                                </div>
+                            </div>
+                             <p class="mt-2 text-xs text-gray-500">Nota: Al enviar, se abrirá tu cliente de correo. Deberás adjuntar el archivo manualmente.</p>
+                        </div>
+                        <div class="mt-8 text-right">
+                            <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white transition-colors" style="background-color: #2A6B72; hover:background-color: #388e99;">Enviar Propuesta</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>
@@ -462,7 +513,34 @@
         });
 
         updateTabContent(projectsData[0].id);
+
+        // Proposal Form
+        const form = document.getElementById('proposal-form');
+        const fileInput = document.getElementById('file-upload-input');
+        const fileNameDisplay = document.getElementById('file-name');
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name;
+            } else {
+                 fileNameDisplay.textContent = 'PDF, DOCX, JPG hasta 10MB';
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const proposal = document.getElementById('proposal').value;
+
+            const subject = encodeURIComponent(`Nueva Propuesta de: ${name}`);
+            const body = encodeURIComponent(`Nombre: ${name}\nCorreo: ${email}\n\nPropuesta:\n${proposal}\n\n`);
+            
+            const mailtoLink = `mailto:angosturainteligente@gmail.com?subject=${subject}&body=${body}`;
+            window.location.href = mailtoLink;
+        });
     });
     </script>
 </body>
 </html>
+
