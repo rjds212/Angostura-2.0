@@ -64,6 +64,10 @@
                         proposalsContainer.appendChild(card);
                     });
                 }
+            }, (error) => {
+                 console.error("Error with snapshot listener: ", error);
+                 const proposalsContainer = document.getElementById('proposals-feed');
+                 if(proposalsContainer) proposalsContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Error al cargar las propuestas. Verifique su configuración de Firebase y las reglas de seguridad.</p>`;
             });
 
             document.getElementById('proposals-feed').addEventListener('click', async (e) => {
@@ -98,6 +102,7 @@
                 submitButton.textContent = 'Publicando...';
 
                 try {
+                    // 1. Add to Firebase
                     await addDoc(collection(db, proposalsPath), {
                         name: name,
                         proposal: proposal,
@@ -107,6 +112,7 @@
                         createdAt: new Date()
                     });
                     
+                    // 2. Prepare and trigger mailto link
                     const subject = encodeURIComponent(`Nueva Propuesta Ciudadana: ${name}`);
                     const body = encodeURIComponent(
                         `Se ha recibido una nueva propuesta a través del Muro de Ideas de la página web.\n\n` +
@@ -131,24 +137,21 @@
             });
         }
 
-        onAuthStateChanged(auth, async (user) => {
+        (async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Firebase Authentication Error:", error);
+            }
+        })();
+
+        onAuthStateChanged(auth, (user) => {
             if (user) {
                 startApp(user);
-            } else {
-                 try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                       await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                       await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.error("Initial sign-in failed, trying anonymous sign-in as fallback:", error);
-                    try {
-                        await signInAnonymously(auth);
-                    } catch (anonymousError) {
-                         console.error("Anonymous sign-in also failed:", anonymousError);
-                    }
-                }
             }
         });
     </script>
@@ -580,7 +583,7 @@
                 'Aumento del 150% en el ingreso de turistas internacionales.',
                 'Establecimiento de al menos 50 nuevas startups de base tecnológica.'
             ]},
-            { id: 'sostenibilidad', icon: '🌳', title: 'Sostenibilidad y Patrimonio', desc: 'Monitoreo ambiental con sensores en el río Orinoco y otros puntos de la ciudad, con una gestión inteligente de desechos solidos.', impact: [
+            { id: 'sostenibilidad', icon: '�', title: 'Sostenibilidad y Patrimonio', desc: 'Monitoreo ambiental con sensores en el río Orinoco y otros puntos de la ciudad, con una gestión inteligente de desechos solidos.', impact: [
                 'Aumento del 70% en la tasa de reciclaje municipal.',
                 'Reducción del 50% en la contaminación del aire en el centro histórico.',
                 'Protección efectiva del 100% de las zonas de ribera del Orinoco.'
