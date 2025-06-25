@@ -95,7 +95,7 @@
                 const proposal = document.getElementById('proposal').value;
                 const submitButton = e.target.querySelector('button[type="submit"]');
                 submitButton.disabled = true;
-                submitButton.textContent = 'Enviando...';
+                submitButton.textContent = 'Publicando...';
 
                 try {
                     await addDoc(collection(db, proposalsPath), {
@@ -106,12 +106,27 @@
                         voters: [],
                         createdAt: new Date()
                     });
+                    
+                    const subject = encodeURIComponent(`Nueva Propuesta Ciudadana: ${name}`);
+                    const body = encodeURIComponent(
+                        `Se ha recibido una nueva propuesta a través del Muro de Ideas de la página web.\n\n` +
+                        `------------------------------------\n` +
+                        `Autor: ${name}\n` +
+                        `------------------------------------\n\n` +
+                        `Propuesta:\n${proposal}\n` +
+                        `------------------------------------`
+                    );
+                    const mailtoLink = `mailto:angosturainteligente@gmail.com?subject=${subject}&body=${body}`;
+                    
+                    window.location.href = mailtoLink;
+                    
                     e.target.reset();
+
                 } catch (error) {
                     console.error("Error adding document: ", error);
                 } finally {
                     submitButton.disabled = false;
-                    submitButton.textContent = 'Enviar Propuesta';
+                    submitButton.textContent = 'Compartir Idea';
                 }
             });
         }
@@ -552,7 +567,7 @@
                 'Continuidad del servicio de agua potable del 99% en zonas piloto.',
                 'Reducción del 50% en el tiempo de respuesta a fallas eléctricas.'
             ]},
-            { id: 'movilidad', icon: '�', title: 'Movilidad Integrada', desc: 'Transporte público seguro y eficiente, con pago único y semaforización inteligente para optimizar el flujo.', impact: [
+            { id: 'movilidad', icon: '🚌', title: 'Movilidad Integrada', desc: 'Transporte público seguro y eficiente, con pago único y semaforización inteligente para optimizar el flujo.', impact: [
                 'Disminución de 30 minutos en el tiempo de viaje promedio diario.',
                 'Aumento del 50% en la cobertura del transporte público en parroquias periféricas.',
                 'Reducción del 25% en accidentes de tráfico en corredores principales.'
