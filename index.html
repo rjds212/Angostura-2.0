@@ -18,7 +18,7 @@
         - Economic Development -> Goal: Organize/Inform -> HTML/CSS Cards. Justification: Presents diverse new projects in a clear, digestible format.
         - Implementation Phases -> Goal: Change -> HTML/CSS Timeline. Justification: Clearly visualizes the sequence of actions over time.
         - Emblematic Projects -> Goal: Inform/Organize -> HTML/CSS Tabbed Interface. Justification: Structures detailed content in a compact, user-controlled manner.
-        - Proposal Form -> Goal: Interact -> HTML Form with JS mailto. Justification: Allows users to submit ideas directly via their email client, a simple and effective solution without a backend.
+        - Proposal Form -> Goal: Interact -> HTML Form with JS mailto and local display. Justification: Allows users to see their submission locally and submit via their email client, a simple and effective solution without a backend.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -318,24 +318,6 @@
                              <label for="proposal" class="block text-sm font-medium text-gray-700">Tu Propuesta</label>
                              <textarea id="proposal" name="proposal" rows="6" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
                         </div>
-                         <div class="mt-6">
-                            <label for="file-upload" class="block text-sm font-medium text-gray-700">Adjuntar Archivo (Opcional)</label>
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                <div class="space-y-1 text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <div class="flex text-sm text-gray-600">
-                                        <label for="file-upload-input" class="relative cursor-pointer bg-white rounded-md font-medium text-[#2A6B72] hover:text-[#B8D37B] focus-within:outline-none">
-                                            <span>Sube un archivo</span>
-                                            <input id="file-upload-input" name="file-upload" type="file" class="sr-only">
-                                        </label>
-                                        <p class="pl-1">o arrástralo aquí</p>
-                                    </div>
-                                    <p class="text-xs text-gray-500" id="file-name">PDF, DOCX, JPG hasta 10MB</p>
-                                </div>
-                            </div>
-                        </div>
                         <div class="mt-8 text-right">
                             <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white transition-colors" style="background-color: #2A6B72; hover:background-color: #388e99;">Enviar Propuesta</button>
                         </div>
@@ -527,10 +509,10 @@
         const devData = [
             { icon: '🌿', title: 'Proyecto Cáñamo Industrial', desc: 'Impulso a la siembra y procesamiento de cáñamo para la producción y exportación de biodiesel, posicionando a la región en la vanguardia de las energías limpias.' },
             { icon: '⚡️', title: 'Adecuación de Transmisión Eléctrica', desc: 'Modernización y fortalecimiento de la infraestructura de transmisión para garantizar un suministro estable y confiable, clave para la industrialización.' },
-            { icon: '💎', title: 'Planta Procesadora de Minerales', desc: 'Establecimiento de una planta procesadora en la zona limítrofe con Sucre para transformar la riqueza del subsuelo en desarrollo industrial, agregando valor local a la producción y generando un nuevo polo económico.' },
+            { icon: '�', title: 'Planta Procesadora de Minerales', desc: 'Establecimiento de una planta procesadora en la zona limítrofe con Sucre para transformar la riqueza del subsuelo en desarrollo industrial, agregando valor local a la producción y generando un nuevo polo económico.' },
             { icon: '📜', title: 'Oficina de Certificación NI 43-101', desc: 'Apertura de una oficina para la certificación de minerales bajo estándares internacionales, atrayendo inversión formal y garantizando transparencia.' },
             { icon: '⚽', title: 'Rearticulación del Sistema Deportivo', desc: 'Revitalización de la infraestructura y los programas deportivos municipales para fomentar la salud, la disciplina y la cohesión social en los jóvenes.' },
-            { icon: '�', title: 'Impulso Cultural y Social', desc: 'Lanzamiento de un programa integral de atención social y fomento cultural para fortalecer la identidad local y el bienestar comunitario.' }
+            { icon: '🎭', title: 'Impulso Cultural y Social', desc: 'Lanzamiento de un programa integral de atención social y fomento cultural para fortalecer la identidad local y el bienestar comunitario.' }
         ];
         const devGrid = document.querySelector('#desarrollo .grid');
         devData.forEach(item => {
