@@ -114,6 +114,7 @@
             <div class="hidden md:flex items-center space-x-10">
                 <a href="#vision" class="nav-link text-gray-200 font-semibold">La Visión</a>
                 <a href="#candidato" class="nav-link text-gray-200 font-semibold">El Candidato</a>
+                <a href="#testimonios" class="nav-link text-gray-200 font-semibold">Testimonios</a>
                 <a href="#desarrollo" class="nav-link text-gray-200 font-semibold">Desarrollo</a>
                 <a href="#plan" class="nav-link text-gray-200 font-semibold">El Plan</a>
                 <a href="#proyectos" class="nav-link text-gray-200 font-semibold">Proyectos</a>
@@ -302,20 +303,20 @@
                     <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Tu voz es fundamental para construir el futuro de Angostura. Comparte tus ideas y sé parte del cambio.</p>
                 </div>
                 <div class="max-w-2xl mx-auto bg-gray-50 p-8 rounded-xl shadow-md">
-                    <form id="proposal-form-email">
+                    <form id="proposal-form">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="name-email" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
-                                <input type="text" id="name-email" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
+                                <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                                <input type="text" id="name" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
                             </div>
                             <div>
-                                <label for="email-field" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                                <input type="email" id="email-field" name="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
+                                <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                                <input type="email" id="email" name="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
                             </div>
                         </div>
                         <div class="mt-6">
-                             <label for="proposal-text" class="block text-sm font-medium text-gray-700">Tu Propuesta</label>
-                             <textarea id="proposal-text" name="proposal" rows="6" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
+                             <label for="proposal" class="block text-sm font-medium text-gray-700">Tu Propuesta</label>
+                             <textarea id="proposal" name="proposal" rows="6" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
                         </div>
                         <div class="mt-8 text-right">
                             <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white transition-colors" style="background-color: #2A6B72; hover:background-color: #388e99;">Enviar Propuesta</button>
@@ -589,6 +590,27 @@
         });
 
         updateTabContent(projectsData[0].id);
+
+        document.getElementById('proposal-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const proposal = document.getElementById('proposal').value;
+
+            const subject = encodeURIComponent(`Nueva Propuesta Ciudadana: ${name}`);
+            const body = encodeURIComponent(
+                `Se ha recibido una nueva propuesta a través de la página web.\n\n` +
+                `------------------------------------\n` +
+                `Autor: ${name}\n` +
+                `Correo: ${email}\n`+
+                `------------------------------------\n\n` +
+                `Propuesta:\n${proposal}\n` +
+                `------------------------------------`
+            );
+            
+            const mailtoLink = `mailto:angosturainteligente@gmail.com?subject=${subject}&body=${body}`;
+            window.location.href = mailtoLink;
+        });
 
     });
     </script>
