@@ -17,10 +17,169 @@
         - Candidate Bio -> Goal: Inform -> HTML/CSS two-column layout. Justification: Classic, professional way to introduce a person.
         - Economic Development -> Goal: Organize/Inform -> HTML/CSS Cards. Justification: Presents diverse new projects in a clear, digestible format.
         - Implementation Phases -> Goal: Change -> HTML/CSS Timeline. Justification: Clearly visualizes the sequence of actions over time.
-        - Emblematic Projects -> Goal: Inform/Organize -> HTML/CSS Tabbed Interface. Justification: Structures detailed content in a compact, user-controlled manner.
-        - Proposal Form -> Goal: Interact -> HTML Form with JS mailto. Justification: Allows users to submit ideas directly via their email client, a simple and effective solution without a backend.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+        - Emblematic Projects -> Goal: Info<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Interactivo Angostura Inteligente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO_KEY", authDomain: "DEMO.firebaseapp.com", projectId: "DEMO_PROJECT" };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        let proposalsListener = null;
+        
+        const startApp = async (user) => {
+            const userId = user.uid;
+            
+            if (proposalsListener) proposalsListener();
+
+            const proposalsPath = `artifacts/${appId}/public/data/proposals`;
+            const proposalsCollection = collection(db, proposalsPath);
+            const q = query(proposalsCollection, orderBy("createdAt", "desc"));
+
+            proposalsListener = onSnapshot(q, (querySnapshot) => {
+                const proposalsContainer = document.getElementById('proposals-feed');
+                if (!proposalsContainer) return;
+                proposalsContainer.innerHTML = '';
+                if (querySnapshot.empty) {
+                    proposalsContainer.innerHTML = `<p class="text-center text-gray-500 col-span-full">Aún no hay propuestas. ¡Sé el primero en compartir tu idea!</p>`;
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const proposal = doc.data();
+                        const proposalId = doc.id;
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-6 rounded-lg shadow-md';
+                        
+                        const userHasVoted = proposal.voters && proposal.voters.includes(userId);
+                        
+                        card.innerHTML = `
+                            <p class="text-gray-800 text-lg">"${proposal.proposal}"</p>
+                            <p class="text-right text-sm font-bold mt-4 text-[#2A6B72]">- ${proposal.name}</p>
+                            <div class="flex justify-end items-center mt-4 pt-4 border-t border-gray-200 space-x-6">
+                                <button data-id="${proposalId}" data-action="like" ${userHasVoted ? 'disabled' : ''} class="flex items-center space-x-2 text-gray-500 ${userHasVoted ? 'opacity-50' : 'hover:text-green-500'} transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                                    <span class="font-semibold">${proposal.likes || 0}</span>
+                                </button>
+                                <button data-id="${proposalId}" data-action="dislike" ${userHasVoted ? 'disabled' : ''} class="flex items-center space-x-2 text-gray-500 ${userHasVoted ? 'opacity-50' : 'hover:text-red-500'} transition-colors">
+                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v7a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path></svg>
+                                    <span class="font-semibold">${proposal.dislikes || 0}</span>
+                                </button>
+                            </div>
+                        `;
+                        proposalsContainer.appendChild(card);
+                    });
+                }
+            }, (error) => {
+                 console.error("Error with snapshot listener: ", error);
+                 const proposalsContainer = document.getElementById('proposals-feed');
+                 if(proposalsContainer) proposalsContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Error al cargar las propuestas. Verifique su configuración de Firebase y las reglas de seguridad.</p>`;
+            });
+
+            document.getElementById('proposals-feed').addEventListener('click', async (e) => {
+                const button = e.target.closest('button[data-id]');
+                if (button && !button.disabled) {
+                    const id = button.dataset.id;
+                    const action = button.dataset.action;
+                    const proposalRef = doc(db, proposalsPath, id);
+                    
+                    try {
+                        const updateData = {
+                            voters: arrayUnion(userId)
+                        };
+                        if (action === 'like') {
+                            updateData.likes = increment(1);
+                        } else if (action === 'dislike') {
+                            updateData.dislikes = increment(1);
+                        }
+                        await updateDoc(proposalRef, updateData);
+                    } catch (error) {
+                        console.error("Error updating document: ", error);
+                    }
+                }
+            });
+
+            document.getElementById('proposal-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value;
+                const proposal = document.getElementById('proposal').value;
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Publicando...';
+
+                try {
+                    // 1. Add to Firebase
+                    await addDoc(collection(db, proposalsPath), {
+                        name: name,
+                        proposal: proposal,
+                        likes: 0,
+                        dislikes: 0,
+                        voters: [],
+                        createdAt: new Date()
+                    });
+                    
+                    // 2. Prepare and trigger mailto link
+                    const subject = encodeURIComponent(`Nueva Propuesta Ciudadana: ${name}`);
+                    const body = encodeURIComponent(
+                        `Se ha recibido una nueva propuesta a través del Muro de Ideas de la página web.\n\n` +
+                        `------------------------------------\n` +
+                        `Autor: ${name}\n` +
+                        `------------------------------------\n\n` +
+                        `Propuesta:\n${proposal}\n` +
+                        `------------------------------------`
+                    );
+                    const mailtoLink = `mailto:angosturainteligente@gmail.com?subject=${subject}&body=${body}`;
+                    
+                    window.location.href = mailtoLink;
+                    
+                    e.target.reset();
+
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    const formError = document.getElementById('form-error');
+                    formError.textContent = 'No se pudo enviar la propuesta. Por favor, inténtelo de nuevo.';
+                    formError.classList.remove('hidden');
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Compartir Idea';
+                }
+            });
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                startApp(user);
+            } else {
+                 try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                       await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                       await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Initial sign-in failed, trying anonymous sign-in as fallback:", error);
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (anonymousError) {
+                         console.error("Anonymous sign-in also failed:", anonymousError);
+                    }
+                }
+            }
+        });
+    </script>
     <style>
         body {
             font-family: 'Lato', sans-serif;
@@ -207,30 +366,6 @@
             </div>
         </section>
         
-        <section id="testimonios" class="py-20 md:py-28 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Voces de Apoyo al Proyecto</h2>
-                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Líderes comunitarios y empresarios locales respaldan la visión de una Angostura Inteligente.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-gray-50 p-8 rounded-lg">
-                        <p class="text-lg text-gray-700 italic">"Una red eléctrica estable es el primer paso para reactivar nuestros comercios. Con energía confiable, podemos volver a producir y a generar empleos para nuestra gente."</p>
-                        <p class="mt-4 font-bold text-right">- María Rodríguez, Comerciante del Casco Histórico</p>
-                    </div>
-                    <div class="bg-gray-50 p-8 rounded-lg">
-                        <p class="text-lg text-gray-700 italic">"La seguridad es más que policías; es tener calles iluminadas y un transporte donde nuestros hijos puedan volver a casa tranquilos. Este plan entiende eso."</p>
-                        <p class="mt-4 font-bold text-right">- Carlos Mendoza, Líder Comunitario de Vista Hermosa</p>
-                    </div>
-                    <div class="bg-gray-50 p-8 rounded-lg">
-                        <p class="text-lg text-gray-700 italic">"Atraer inversión seria requiere transparencia y reglas claras. La oficina de certificación de minerales y las alianzas público-privadas son la señal que el sector productivo estaba esperando."</p>
-                        <p class="mt-4 font-bold text-right">- Ing. Sofía Contreras, Consultora Minera</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
         <section id="desarrollo" class="py-20 md:py-28">
             <div class="container mx-auto px-6">
                  <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
@@ -298,47 +433,31 @@
             <div class="container mx-auto px-6">
                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
-                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Participa: Envía tu Propuesta</h2>
-                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Tu voz es fundamental. Comparte tus ideas y sé parte del cambio.</p>
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Muro de Ideas en Vivo</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Tu voz es fundamental. Comparte tus ideas y vota por las propuestas de otros ciudadanos para construir juntos el futuro de Angostura.</p>
                 </div>
-                <div class="max-w-2xl mx-auto bg-gray-50 p-8 rounded-xl shadow-md">
-                    <form id="proposal-form">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div id="proposals-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                   <!-- Real-time proposals will be injected here -->
+                </div>
+                
+                <div class="max-w-2xl mx-auto">
+                     <h3 class="text-3xl font-bold text-gray-800 text-center mb-8">Envía tu Propuesta</h3>
+                     <form id="proposal-form" class="bg-gray-50 p-8 rounded-xl shadow-md">
+                        <div class="grid grid-cols-1 gap-6">
                             <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                                <label for="name" class="block text-sm font-medium text-gray-700">Tu Nombre</label>
                                 <input type="text" id="name" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
-                            </div>
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                                <input type="email" id="email" name="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
                             </div>
                         </div>
                         <div class="mt-6">
                              <label for="proposal" class="block text-sm font-medium text-gray-700">Tu Propuesta</label>
-                             <textarea id="proposal" name="proposal" rows="6" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
-                        </div>
-                         <div class="mt-6">
-                            <label for="file-upload" class="block text-sm font-medium text-gray-700">Adjuntar Archivo (Opcional)</label>
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                <div class="space-y-1 text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <div class="flex text-sm text-gray-600">
-                                        <label for="file-upload-input" class="relative cursor-pointer bg-white rounded-md font-medium text-[#2A6B72] hover:text-[#B8D37B] focus-within:outline-none">
-                                            <span>Sube un archivo</span>
-                                            <input id="file-upload-input" name="file-upload" type="file" class="sr-only">
-                                        </label>
-                                        <p class="pl-1">o arrástralo aquí</p>
-                                    </div>
-                                    <p class="text-xs text-gray-500" id="file-name">PDF, DOCX, JPG hasta 10MB</p>
-                                </div>
-                            </div>
-                             <p class="mt-2 text-xs text-gray-500">Nota: Al enviar, se abrirá tu cliente de correo. Deberás adjuntar el archivo manualmente.</p>
+                             <textarea id="proposal" name="proposal" rows="4" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
                         </div>
                         <div class="mt-8 text-right">
-                            <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white transition-colors" style="background-color: #2A6B72; hover:background-color: #388e99;">Enviar Propuesta</button>
+                            <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white transition-colors" style="background-color: #2A6B72; hover:background-color: #388e99;">Compartir Idea</button>
                         </div>
+                        <div id="form-error" class="text-red-500 text-center text-sm mt-4 hidden"></div>
                     </form>
                 </div>
             </div>
