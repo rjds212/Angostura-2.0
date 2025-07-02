@@ -10,11 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Refined PRN Teal & Lime (#2A6B72, #B8D37B) on Neutrals -->
-    <!-- Application Structure Plan: The SPA is designed as a narrative journey. 1) 'El Desafío' presents the crisis. 2) 'La Visión' introduces the strategic axes with clickable modals for impact data. 3) 'El Candidato' introduces the leader. 4) 'Testimonios' adds social proof. 5) 'Visualiza' shows tangible change. 6) 'Desarrollo' details diversification plans. 7) 'El Plan' shows the timeline. 8) 'Proyectos Clave' allows drill-down. 9) 'Participa' enables user proposals via email. This structure guides the user from problem to solution to action. -->
+    <!-- Application Structure Plan: The SPA is designed as a narrative journey. 1) 'El Desafío' presents the crisis. 2) 'La Visión' introduces the strategic axes with clickable modals for impact data. 3) 'El Candidato' introduces the leader. 4) 'El Equipo' presents the council candidates. 5) 'Testimonios' adds social proof. 6) 'Visualiza' shows tangible change. 7) 'Desarrollo' details diversification plans. 8) 'El Plan' shows the timeline. 9) 'Proyectos Clave' allows drill-down. 10) 'Participa' enables user proposals via email. This structure guides the user from problem to solution to action. -->
     <!-- Visualization & Content Choices: 
         - Policrisis Data -> Goal: Inform/Compare -> Donut & Bar Charts (Chart.js/Canvas).
         - 6 Strategic Axes -> Goal: Organize -> Interactive HTML/CSS Cards with Modals.
         - Candidate Bio -> Goal: Inform -> HTML/CSS two-column layout.
+        - Team Carousel -> Goal: Inform/Connect -> JS-powered interactive carousel.
         - Testimonials -> Goal: Inform/Connect -> HTML/CSS Quote cards.
         - Before/After Slider -> Goal: Visualize -> Custom HTML/CSS/JS slider.
         - Economic Development -> Goal: Organize/Inform -> HTML/CSS Cards.
@@ -154,6 +155,36 @@
             font-size: 24px;
             font-weight: bold;
         }
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 20;
+            opacity: 0;
+        }
+        .carousel-container:hover .carousel-button {
+            opacity: 1;
+        }
+        .carousel-button:hover {
+            background-color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+        .carousel-button.prev {
+            left: 20px;
+        }
+        .carousel-button.next {
+            right: 20px;
+        }
     </style>
 </head>
 <body>
@@ -166,6 +197,7 @@
             <div class="hidden md:flex items-center space-x-10">
                 <a href="#vision" class="nav-link text-gray-200 font-semibold">La Visión</a>
                 <a href="#candidato" class="nav-link text-gray-200 font-semibold">El Candidato</a>
+                <a href="#equipo" class="nav-link text-gray-200 font-semibold">El Equipo</a>
                 <a href="#testimonios" class="nav-link text-gray-200 font-semibold">Testimonios</a>
                 <a href="#visualiza" class="nav-link text-gray-200 font-semibold">Visualiza</a>
                 <a href="#desarrollo" class="nav-link text-gray-200 font-semibold">Desarrollo</a>
@@ -261,7 +293,30 @@
             </div>
         </section>
         
-        <section id="testimonios" class="py-20 md:py-28 bg-white">
+        <section id="equipo" class="py-20 md:py-28 bg-white">
+            <div class="container mx-auto">
+                <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
+                <div class="text-center mb-16 px-6">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Conoce a Nuestro Equipo de Concejales</h2>
+                    <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Un equipo de profesionales comprometidos con el futuro de Angostura.</p>
+                </div>
+                <div class="relative carousel-container">
+                    <div id="team-carousel-wrapper" class="w-full overflow-hidden">
+                        <div id="team-carousel-inner" class="flex">
+                            <!-- Candidate cards will be injected here -->
+                        </div>
+                    </div>
+                    <button id="prev-btn" class="carousel-button prev">
+                        <svg class="w-8 h-8" style="color: #2A6B72;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button id="next-btn" class="carousel-button next">
+                        <svg class="w-8 h-8" style="color: #2A6B72;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonios" class="py-20 md:py-28">
             <div class="container mx-auto px-6">
                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
@@ -269,15 +324,15 @@
                     <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Líderes comunitarios y empresarios locales respaldan la visión de una Angostura Inteligente.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-gray-50 p-8 rounded-lg">
+                    <div class="bg-white p-8 rounded-lg shadow-md">
                         <p class="text-lg text-gray-700 italic">"Una red eléctrica estable es el primer paso para reactivar nuestros comercios. Con energía confiable, podemos volver a producir y a generar empleos para nuestra gente."</p>
                         <p class="mt-4 font-bold text-right">- María Rodríguez, Comerciante del Casco Histórico</p>
                     </div>
-                    <div class="bg-gray-50 p-8 rounded-lg">
+                    <div class="bg-white p-8 rounded-lg shadow-md">
                         <p class="text-lg text-gray-700 italic">"La seguridad es más que policías; es tener calles iluminadas y un transporte donde nuestros hijos puedan volver a casa tranquilos. Este plan entiende eso."</p>
                         <p class="mt-4 font-bold text-right">- Carlos Mendoza, Líder Comunitario de Vista Hermosa</p>
                     </div>
-                    <div class="bg-gray-50 p-8 rounded-lg">
+                    <div class="bg-white p-8 rounded-lg shadow-md">
                         <p class="text-lg text-gray-700 italic">"Atraer inversión seria requiere transparencia y reglas claras. La oficina de certificación de minerales y las alianzas público-privadas son la señal que el sector productivo estaba esperando."</p>
                         <p class="mt-4 font-bold text-right">- Ing. Sofía Contreras, Consultora Minera</p>
                     </div>
@@ -285,7 +340,7 @@
             </div>
         </section>
 
-        <section id="visualiza" class="py-20 md:py-28">
+        <section id="visualiza" class="py-20 md:py-28 bg-white">
             <div class="container mx-auto px-6">
                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
@@ -293,12 +348,20 @@
                     <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Arrastra el deslizador para ver cómo la tecnología puede transformar nuestra ciudad.</p>
                 </div>
                 <div id="comparison-container" class="max-w-4xl mx-auto">
-                    <!-- Before and After Slider will be injected here -->
+                    <div class="comparison-slider">
+                        <img src="https://i.imgur.com/RYUC2OU.jpeg" alt="Calle de Ciudad Bolívar Antes">
+                        <div class="comparison-image-after">
+                            <img src="https://i.imgur.com/GW0EHJT.jpeg" alt="Calle de Ciudad Bolívar Después">
+                        </div>
+                        <div class="comparison-resizer">
+                            <div class="comparison-handle">&lt;&gt;</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
         
-        <section id="desarrollo" class="py-20 md:py-28 bg-white">
+        <section id="desarrollo" class="py-20 md:py-28">
             <div class="container mx-auto px-6">
                  <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
@@ -311,7 +374,7 @@
             </div>
         </section>
 
-        <section id="plan" class="py-20 md:py-28">
+        <section id="plan" class="py-20 md:py-28 bg-white">
             <div class="container mx-auto px-6">
                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
@@ -341,7 +404,7 @@
             </div>
         </section>
 
-        <section id="proyectos" class="py-20 md:py-28 bg-white">
+        <section id="proyectos" class="py-20 md:py-28">
             <div class="container mx-auto px-6">
                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
@@ -361,28 +424,28 @@
             </div>
         </section>
 
-        <section id="participa" class="py-20 md:py-28">
+        <section id="participa" class="py-20 md:py-28 bg-white">
             <div class="container mx-auto px-6">
                 <div class="w-48 h-1.5 rounded-full mx-auto mb-16" style="background-color: #B8D37B;"></div>
                 <div class="text-center mb-16">
                     <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Participa: Envía tu Propuesta</h2>
                     <p class="mt-6 text-lg text-gray-500 max-w-3xl mx-auto">Tu voz es fundamental para construir el futuro de Angostura. Comparte tus ideas y sé parte del cambio.</p>
                 </div>
-                <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
-                    <form id="proposal-form">
+                <div class="max-w-2xl mx-auto bg-gray-50 p-8 rounded-xl shadow-md">
+                    <form id="proposal-form-email">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
-                                <input type="text" id="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
+                                <label for="name-email" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                                <input type="text" id="name-email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
                             </div>
                             <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                                <input type="email" id="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
+                                <label for="email-field" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                                <input type="email" id="email-field" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]">
                             </div>
                         </div>
                         <div class="mt-6">
-                             <label for="proposal" class="block text-sm font-medium text-gray-700">Tu Propuesta</label>
-                             <textarea id="proposal" rows="6" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
+                             <label for="proposal-text" class="block text-sm font-medium text-gray-700">Tu Propuesta</label>
+                             <textarea id="proposal-text" rows="6" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B8D37B] focus:border-[#B8D37B]"></textarea>
                         </div>
                         <div class="mt-8 text-right">
                             <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white transition-colors" style="background-color: #2A6B72; hover:background-color: #388e99;">Enviar Propuesta</button>
@@ -662,9 +725,9 @@
         if (comparisonContainer) {
             comparisonContainer.innerHTML = `
                 <div class="comparison-slider">
-                    <img src="https://correodelcaroni.com/wp-content/uploads/2024/09/CIUDADB_servicios_WEB.jpg.webp" alt="Calle de Ciudad Bolívar Antes">
+                    <img src="https://i.imgur.com/RYUC2OU.jpeg" alt="Calle de Ciudad Bolívar Antes">
                     <div class="comparison-image-after">
-                        <img src="https://i.imgur.com/4y39Br3.jpeg" alt="Calle de Ciudad Bolívar Después">
+                        <img src="https://i.imgur.com/GW0EHJT.jpeg" alt="Calle de Ciudad Bolívar Después">
                     </div>
                     <div class="comparison-resizer">
                         <div class="comparison-handle">&lt;&gt;</div>
@@ -703,6 +766,97 @@
             document.addEventListener('touchend', () => isDragging = false);
             document.addEventListener('touchmove', (e) => {
                 if (isDragging) moveDivisor(e);
+            });
+        }
+
+        // Team Carousel
+        const teamCarouselWrapper = document.getElementById('team-carousel-wrapper');
+        const teamCarouselInner = document.getElementById('team-carousel-inner');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        if (teamCarouselWrapper && teamCarouselInner && prevBtn && nextBtn) {
+            const candidates = [
+                { name: 'Roston Davis', img: 'https://i.imgur.com/6ksQlWD.jpeg' },
+                { name: 'Candidato 2', img: 'https://placehold.co/400x400/B8D37B/2A6B72?text=C2' },
+                { name: 'Candidato 3', img: 'https://placehold.co/400x400/2A6B72/FFFFFF?text=C3' },
+                { name: 'Candidato 4', img: 'https://placehold.co/400x400/B8D37B/2A6B72?text=C4' },
+                { name: 'Candidato 5', img: 'https://placehold.co/400x400/2A6B72/FFFFFF?text=C5' },
+                { name: 'Candidato 6', img: 'https://placehold.co/400x400/B8D37B/2A6B72?text=C6' },
+                { name: 'Candidato 7', img: 'https://placehold.co/400x400/2A6B72/FFFFFF?text=C7' },
+                { name: 'Candidato 8', img: 'https://placehold.co/400x400/B8D37B/2A6B72?text=C8' },
+                { name: 'Candidato 9', img: 'https://placehold.co/400x400/2A6B72/FFFFFF?text=C9' },
+                { name: 'Candidato 10', img: 'https://placehold.co/400x400/B8D37B/2A6B72?text=C10' },
+                { name: 'Candidato 11', img: 'https://placehold.co/400x400/2A6B72/FFFFFF?text=C11' }
+            ];
+            
+            const allCandidates = [...candidates, ...candidates];
+            
+            allCandidates.forEach(candidate => {
+                const card = document.createElement('div');
+                card.className = 'flex-shrink-0 w-[500px] p-8 snap-center';
+                card.innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <img src="${candidate.img}" alt="Foto de ${candidate.name}" class="w-full h-auto aspect-square object-cover rounded-lg shadow-xl">
+                    </div>
+                `;
+                teamCarouselInner.appendChild(card);
+            });
+
+            let autoScrollInterval = setInterval(() => {
+                teamCarouselWrapper.scrollBy({ left: 1, behavior: 'auto' });
+                 if (teamCarouselWrapper.scrollLeft >= teamCarouselWrapper.scrollWidth / 2) {
+                    teamCarouselWrapper.scrollTo({ left: 0, behavior: 'auto' });
+                }
+            }, 25);
+
+            const stopAutoScroll = () => clearInterval(autoScrollInterval);
+            const startAutoScroll = () => {
+                stopAutoScroll();
+                autoScrollInterval = setInterval(() => {
+                    teamCarouselWrapper.scrollBy({ left: 1, behavior: 'auto' });
+                    if (teamCarouselWrapper.scrollLeft >= teamCarouselWrapper.scrollWidth / 2) {
+                        teamCarouselWrapper.scrollTo({ left: 0, behavior: 'auto' });
+                    }
+                }, 25);
+            }
+
+            teamCarouselWrapper.addEventListener('mouseenter', stopAutoScroll);
+            teamCarouselWrapper.addEventListener('mouseleave', startAutoScroll);
+
+            prevBtn.addEventListener('click', () => {
+                teamCarouselWrapper.scrollBy({ left: -500, behavior: 'smooth' });
+            });
+            nextBtn.addEventListener('click', () => {
+                teamCarouselWrapper.scrollBy({ left: 500, behavior: 'smooth' });
+            });
+        }
+
+        // Proposal Form Submission
+        const proposalForm = document.getElementById('proposal-form-email');
+        if (proposalForm) {
+            proposalForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const name = document.getElementById('name-email').value;
+                const email = document.getElementById('email-field').value;
+                const proposal = document.getElementById('proposal-text').value;
+                
+                const subject = encodeURIComponent(`Nueva Propuesta Ciudadana: ${name}`);
+                const body = encodeURIComponent(
+                    `Se ha recibido una nueva propuesta a través de la página web.\n\n` +
+                    `------------------------------------\n` +
+                    `Autor: ${name}\n` +
+                    `Correo: ${email}\n`+
+                    `------------------------------------\n\n` +
+                    `Propuesta:\n${proposal}\n` +
+                    `------------------------------------`
+                );
+                
+                const mailtoLink = `mailto:angosturainteligente@gmail.com?subject=${subject}&body=${body}`;
+                window.location.href = mailtoLink;
+                
+                proposalForm.reset();
             });
         }
     });
